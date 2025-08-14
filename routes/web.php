@@ -13,13 +13,15 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware(['auth', 'role.superadmin'])->group(function () {
-    Route::group(['prefix' => 'admin'], function () {
-        Route::get('role-permissions', [RolePermissionController::class, 'index'])->name('role-permissions');
-        Route::post('role-permission-form', [RolePermissionController::class, 'rolePermissionForm'])->name('role-permission-form');
-        Route::post('update-role-permission', [RolePermissionController::class, 'update'])->name('update-role-permission');
-        Route::get('role/{id}/permissions', [RolePermissionController::class, 'getPermissions'])->name('role.get-permissions');
+Route::group(['prefix' => 'admin'], function () {
+    Route::middleware(['auth'])->group(function () {
+        Route::get('dashboard', action: [DashboardController::class, 'index'])->name('dashboard');
+        
+        // roles & permissions
+        Route::get('role-permissions', [RolePermissionController::class, 'index'])->name('role-permissions')->middleware('permission:permissions,can_view');
+        Route::post('role-permission-form', [RolePermissionController::class, 'rolePermissionForm'])->name('role-permission-form')->middleware('permission:permissions,can_add');
+        Route::post('update-role-permission', [RolePermissionController::class, 'update'])->name('update-role-permission')->middleware('permission:permissions,can_add');
+        Route::get('role/{id}/permissions', [RolePermissionController::class, 'getPermissions'])->name('role.get-permissions')->middleware('permission:permissions,can_view');
     });
 });
