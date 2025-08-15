@@ -26,8 +26,19 @@
 <!-- JS -->
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- datatable -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- toastr -->
 <script src="{{asset('js')}}/toastr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
+<!-- select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
+<!-- moment js -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
 @stack('scripts')
 </body>
 </html>
