@@ -23,7 +23,9 @@
                         {{ auth()->user()->name }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-start">
-                        <a class='dropdown-item' href='pages-profile.html'><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+                        @if(canDo('permissions','can_view'))
+                            <a class='dropdown-item' href='{{ route('admin.profile') }}'><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+                        @endif
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Log out</a>
                     </div>
@@ -37,16 +39,39 @@
             <li class="sidebar-header">
                 <!-- Pages -->
             </li>
-            <li class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <a class='sidebar-link' href='{{ route('dashboard') }}'>
-                    <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboards</span>
+            <li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <a class='sidebar-link' href='{{ route('admin.dashboard') }}'>
+                    <i class="fas fa-money-check"></i>
+                    <span class="align-middle">Dashboards</span>
                 </a>
             </li>
-            <li class="sidebar-item {{ request()->routeIs('role-permissions') ? 'active' : '' }}">
-                <a class='sidebar-link' href='{{ route('role-permissions') }}'>
-                    <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Roles & Permissions</span>
-                </a>
-            </li>
+            
+            @if(canDo('permissions','can_add'))
+                <li class="sidebar-item {{ request()->routeIs('admin.role-permissions') ? 'active' : '' }}">
+                    <a class='sidebar-link' href='{{ route('admin.role-permissions') }}'>
+                        <i class="fas fa-user-lock"></i>
+                        <span class="align-middle">Roles & Permissions</span>
+                    </a>
+                </li>
+            @endif
+
+            @if(canDo('users','can_add'))
+                <li class="sidebar-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
+                    <a class='sidebar-link' href='{{ route('admin.users.index') }}'>
+                        <i class="fas fa-users"></i>
+                        <span class="align-middle">Users</span>
+                    </a>
+                </li>
+            @endif
+            
+            @if(canDo('customers','can_add'))
+                <li class="sidebar-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
+                    <a class='sidebar-link' href='{{ route('admin.customers.index') }}'>
+                        <i class="fas fa-user-tie"></i>
+                        <span class="align-middle">Customers</span>
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 </nav>

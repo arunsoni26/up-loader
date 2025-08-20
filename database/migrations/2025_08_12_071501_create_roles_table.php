@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 2. Seed roles
+        // Seed roles
         DB::table('roles')->insert([
             ['id' => 1, 'name' => 'Super Admin', 'slug' => 'superadmin', 'priority' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'name' => 'Admin', 'slug' => 'admin', 'priority' => 2, 'created_at' => now(), 'updated_at' => now()],
@@ -30,6 +30,20 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('role_id')->default(value: 2)->constrained(); // default to customer or user
         });
+        
+        // Seed superadmin
+        DB::table('users')->insert([
+            [
+                'id' => 1,
+                'name' => 'Super Admin',
+                'email' => 'superadmin@dksahu.co.in',
+                'email_verified_at' => now(),
+                'password' => bcrypt(12345678),
+                'role_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+        ]);
     }
 
     /**

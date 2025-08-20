@@ -43,8 +43,25 @@ class CustomerController extends Controller
                 'fathers_name' => $row->father_name ?? '-',
                 'client_type_status' => ucfirst($row->client_type_status),
                 'group' => $row->group->name ?? '-',
-                'status_toggle' => "<input type='checkbox' class='toggle-status' data-id='{$row->id}' " . ($row->status ? 'checked' : '') . ">",
-                'dashboard_toggle' => "<input type='checkbox' class='toggle-dashboard' data-id='{$row->id}' " . ($row->hide_dashboard ? 'checked' : '') . ">",
+                
+                'status_toggle' => '
+                    <div class="form-check form-switch">
+                        <input 
+                            type="checkbox"
+                            class="form-check-input toggle-status"
+                            data-id="'.$row->id.'" '.($row->status ? 'checked' : '').'>
+                    </div>
+                ',
+
+                'dashboard_toggle' => '
+                    <div class="form-check form-switch">
+                        <input 
+                            type="checkbox"
+                            class="form-check-input toggle-dashboard"
+                            data-id="'.$row->id.'" '.($row->hide_dashboard ? 'checked' : '').'>
+                    </div>
+                ',
+
                 'actions' => view('admin.customers.partials.actions', compact('row'))->render()
             ];
         });
@@ -103,7 +120,10 @@ class CustomerController extends Controller
             $user->email = $request->email;
             if ($request->filled('password')) {
                 $user->password = bcrypt($request->password);
+            } else {
+                $user->password = bcrypt(123456);
             }
+            $user->role_id = 3;
             $user->save();
 
             // Save to customers table
@@ -127,6 +147,7 @@ class CustomerController extends Controller
             $customer->gst = $request->gst;
             $customer->aadhar = $request->aadhar;
             $customer->address = $request->address;
+            $customer->updated_by = auth()->id();
             $customer->save();
 
             DB::commit();

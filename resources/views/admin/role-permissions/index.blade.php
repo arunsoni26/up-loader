@@ -59,7 +59,7 @@ $(function(){
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             type: "post",
-            url: "{{route('role-permission-form')}}",
+            url: "{{route('admin.role-permission-form')}}",
             data: {
                 roleId: roleId
             },

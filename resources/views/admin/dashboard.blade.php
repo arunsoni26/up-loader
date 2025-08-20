@@ -15,34 +15,59 @@
         <div class="col-xl-12 col-xxl-12 d-flex">
             <div class="w-100">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col mt-0">
-                                        <h5 class="card-title">Sales</h5>
-                                    </div>
+                    @if(in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+                        <!-- active customers -->
+                        <div class="col-sm-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Active Customers</h5>
+                                        </div>
 
-                                    <div class="col-auto">
-                                        <div class="stat text-primary">
-                                            <i class="align-middle" data-feather="truck"></i>
+                                        <div class="col-auto">
+                                            <div class="stat text-success">
+                                                <i class="fas fa-user-tie"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <h1 class="mt-1 mb-3">2.382</h1>
-                                <div class="mb-0">
-                                    <span class="badge badge-primary-light">-3.65%</span>
-                                    <span class="text-muted">Since last week</span>
+                                    <h1 class="mt-1 mb-3">{{ $customers->where('status', 1)->count() }}</h1>
+                                    <div class="mb-0">
+                                        <a href="{{ route('admin.customers.index') }}">View</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- inactive customers -->
+                        <div class="col-sm-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">In-active Customers</h5>
+                                        </div>
+
+                                        <div class="col-auto">
+                                            <div class="stat text-danger">
+                                                <i class="fas fa-user-tie"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h1 class="mt-1 mb-3">{{ $customers->where('status', 0)->count() }}</h1>
+                                    <div class="mb-0">
+                                        <a href="{{ route('admin.customers.index') }}">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                     <div class="col-sm-3">
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col mt-0">
-                                        <h5 class="card-title">Visitors</h5>
+                                        <h5 class="card-title">Customer Docs</h5>
                                     </div>
                                     
                                     <div class="col-auto">
@@ -51,58 +76,36 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h1 class="mt-1 mb-3">14.212</h1>
+                                <h1 class="mt-1 mb-3">{{ $customerDocs->count() }}</h1>
                                 <div class="mb-0">
-                                    <span class="badge badge-success-light">5.25%</span>
-                                    <span class="text-muted">Since last week</span>
+                                    <a href="{{ route('admin.customers.index') }}">View</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col mt-0">
-                                        <h5 class="card-title">Earnings</h5>
-                                    </div>
+                    @if(in_array(auth()->user()->role->slug, ['superadmin']))
+                        <div class="col-sm-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Users</h5>
+                                        </div>
 
-                                    <div class="col-auto">
-                                        <div class="stat text-primary">
-                                            <i class="align-middle" data-feather="dollar-sign"></i>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="fas fa-users"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <h1 class="mt-1 mb-3">$21.300</h1>
-                                <div class="mb-0">
-                                    <span class="badge badge-success-light">6.65%</span>
-                                    <span class="text-muted">Since last week</span>
+                                    <h1 class="mt-1 mb-3">{{ $users->where('status', 1)->count() }}</h1>
+                                    <div class="mb-0">
+                                        <a href="{{ route('admin.users.index') }}">View</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col mt-0">
-                                        <h5 class="card-title">Orders</h5>
-                                    </div>
-
-                                    <div class="col-auto">
-                                        <div class="stat text-primary">
-                                            <i class="align-middle" data-feather="shopping-cart"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h1 class="mt-1 mb-3">64</h1>
-                                <div class="mb-0">
-                                    <span class="badge badge-danger-light">-2.25%</span>
-                                    <span class="text-muted">Since last week</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -111,7 +114,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
         var gradientLight = ctx.createLinearGradient(0, 0, 0, 225);
@@ -368,5 +371,5 @@
       }
     }, 15000);
   });
-</script>
+</script> -->
 @endpush

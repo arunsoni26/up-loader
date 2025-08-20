@@ -97,35 +97,72 @@
     $(document).ready(function() {
         // Initialize Select2
         $('#filterGroup, #filterStatus').select2({ theme: 'bootstrap-5', width: '100%' });
+        
+        let retryCount = 1;
+        let table;
 
-        let table = $('#customersTable').DataTable({
-            processing: true,
-            serverSide: false,
-            ajax: {
-                url: "{{ route('admin.customers.list') }}",
-                data: function(d) {
-                    d.group_id = $('#filterGroup').val();
-                    d.status = $('#filterStatus').val();
-                    d.code = $('#filterCode').val();
-                }
-            },
-            columns: [
-                { data: 'name' },
-                { data: 'email' },
-                { data: 'pan' },
-                { data: 'fathers_name' },
-                { data: 'client_type_status' },
-                { data: 'group' },
-                { data: 'status_toggle', orderable: false, searchable: false },
-                { data: 'dashboard_toggle', orderable: false, searchable: false },
-                { data: 'actions', orderable: false, searchable: false, className: 'text-center' }
-            ]
-        });
+        function initCustomersTable(retries = retryCount) {
+            if ($.fn.DataTable.isDataTable('#customersTable')) {
+                $('#customersTable').DataTable().destroy();
+            }
 
-        // Filters reload
+            table = $('#customersTable').DataTable({
+                processing: true,
+                serverSide: false,
+                ajax: {
+                    url: "{{ route('admin.customers.list') }}",
+                    data: function(d) {
+                        d.group_id = $('#filterGroup').val();
+                        d.status = $('#filterStatus').val();
+                        d.code = $('#filterCode').val();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.error("DataTables AJAX error:", xhr.responseText);
+                        let isServerError = false;
+
+                        try {
+                            const json = JSON.parse(xhr.responseText);
+                            if (json.message && json.message === "Server Error") {
+                                isServerError = true;
+                            }
+                        } catch (e) {
+                            isServerError = xhr.status === 500;
+                        }
+
+                        if (retries > 0 && isServerError) {
+                            console.warn(`Retrying customer table load... (${retryCount - retries + 1})`);
+                            setTimeout(() => {
+                                initCustomersTable(retries - 1);
+                            }, 1000);
+                        } else {
+                            alert("Failed to load customer data. Please reload the page.");
+                        }
+                    }
+                },
+                columns: [
+                    { data: 'name' },
+                    { data: 'email' },
+                    { data: 'pan' },
+                    { data: 'fathers_name' },
+                    { data: 'client_type_status' },
+                    { data: 'group' },
+                    { data: 'status_toggle', orderable: false, searchable: false },
+                    { data: 'dashboard_toggle', orderable: false, searchable: false },
+                    { data: 'actions', orderable: false, searchable: false, className: 'text-center' }
+                ]
+            });
+        }
+
+        // Initialize customers table on load
+        initCustomersTable();
+
+        // Reload on filters
         $('#filterGroup, #filterStatus, #filterCode').on('change keyup', function() {
-            table.ajax.reload();
+            if (table) {
+                table.ajax.reload();
+            }
         });
+
     });
 
     // Add Customer button
@@ -162,6 +199,15 @@
             }
         });
     });
+    
+
+    $(document).on('change', '.toggle-status', function(){
+        $.post("{{ url('admin/customers/toggle-status') }}/" + $(this).data('id'), {_token: "{{ csrf_token() }}"});
+    });
+
+    $(document).on('change', '.toggle-dashboard', function(){
+        $.post("{{ url('admin/customers/toggle-dashboard') }}/" + $(this).data('id'), {_token: "{{ csrf_token() }}"});
+    });
 
     function loadGroups(){
         $.get('{{ route("admin.customers.groups.list") }}', function(data){
@@ -172,12 +218,14 @@
                             <td>${group.name}</td>
                             <td>${createdAt.format('MMMM D, YYYY')}</td>
                             <td>
-                                <button class="btn btn-primary btn-sm" onclick="openGroupForm(${group.id})">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteGroup(${group.id})">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="openGroupForm(${group.id})">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteGroup(${group.id})">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>`;
             });

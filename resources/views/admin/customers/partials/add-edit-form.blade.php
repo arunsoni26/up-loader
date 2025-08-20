@@ -37,7 +37,7 @@
                 <label class="form-label">Father's Name</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-                    <input type="text" name="fathers_name" class="form-control" value="{{ $customer->fathers_name ?? '' }}" required>
+                    <input type="text" name="fathers_name" class="form-control" value="{{ $customer->father_name ?? '' }}" required>
                 </div>
             </div>
 
@@ -103,21 +103,23 @@
                 </div>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Password</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+            @if(isset($customer) && !empty($customer->email))
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Confirm Password</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
+                    </div>
                 </div>
-            </div>
+            @endif
 
             {{-- City --}}
             <div class="col-md-6">

@@ -142,7 +142,7 @@
             $.ajax({
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 type: "POST",
-                url: "{{ route('update-role-permission') }}",
+                url: "{{ route('admin.update-role-permission') }}",
                 data: $(formElement).serialize(),
                 success: function(data) {
                     if (data.code === 200) {
