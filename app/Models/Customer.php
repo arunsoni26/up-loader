@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Customer extends Model
 {
     use SoftDeletes;
+  
+  	protected $casts = [
+    	'dob' => 'date',
+	];
     
     protected $fillable = [
         'name','user_id','gst_name','father_name','pan','pan_doc','client_type_status',

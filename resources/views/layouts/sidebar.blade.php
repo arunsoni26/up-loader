@@ -30,7 +30,7 @@
                         <a class="dropdown-item" href="#">Log out</a>
                     </div>
 
-                    <div class="sidebar-user-subtitle">Designer</div>
+                    <div class="sidebar-user-subtitle">{{ auth()->user()->role->name }}</div>
                 </div>
             </div>
         </div>

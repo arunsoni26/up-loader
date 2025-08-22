@@ -21,8 +21,10 @@
                         <option value="{{ $k }}">{{ $v }}</option>
                     @endforeach
                 </select>
-                <button class="btn btn-light btn-sm" id="btnAddGstYear"><i class="fa fa-plus"></i> GST Year</button>
-                <button class="btn btn-success btn-sm" id="btnUploadDocs"><i class="fa fa-upload"></i> Upload Docs</button>
+              	@if(auth()->user()->hasPermission('customer_docs', 'can_add', auth()->id())) 
+                    <button class="btn btn-light btn-sm" id="btnAddGstYear"><i class="fa fa-plus"></i> GST Year</button>
+                    <button class="btn btn-success btn-sm" id="btnUploadDocs"><i class="fa fa-upload"></i> Upload Docs</button>
+              	@endif
             </div>
         </div>
 

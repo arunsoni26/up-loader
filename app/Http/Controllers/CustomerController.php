@@ -152,11 +152,11 @@ class CustomerController extends Controller
 
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'Customer saved successfully.']);
+            return response()->json(['code' => 200, 'success' => true, 'message' => 'Customer saved successfully.']);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['code' => 500, 'success' => false, 'message' => $e->getMessage()]);
         }
     }
     

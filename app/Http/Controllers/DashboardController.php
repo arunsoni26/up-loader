@@ -26,8 +26,11 @@ class DashboardController extends Controller
      */
     public function index()
     {
+      	if (auth()->user()->role->slug == 'customer' && auth()->user()->customer->hide_dashboard == 0) {
+          	return view('admin.hide-dashboard');
+        }
         $customers = Customer::all();
-        $users = User::all();
+        $users = User::where('role_id', 2)->get();
         $customerDocs = CustomerDocument::join('customers', 'customers.id', 'customer_documents.customer_id')
             ->where('customers.status', 1)->get();
         return view('admin.dashboard', compact('customers', 'users', 'customerDocs'));

@@ -33,7 +33,7 @@
                                     </div>
                                     <h1 class="mt-1 mb-3">{{ $customers->where('status', 1)->count() }}</h1>
                                     <div class="mb-0">
-                                        <a href="{{ route('admin.customers.index') }}">View</a>
+                                        <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.customers.index') }}">View <i class="fas fa-link"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                                     </div>
                                     <h1 class="mt-1 mb-3">{{ $customers->where('status', 0)->count() }}</h1>
                                     <div class="mb-0">
-                                        <a href="{{ route('admin.customers.index') }}">View</a>
+                                        <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.customers.index') }}">View <i class="fas fa-link"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -78,7 +78,13 @@
                                 </div>
                                 <h1 class="mt-1 mb-3">{{ $customerDocs->count() }}</h1>
                                 <div class="mb-0">
-                                    <a href="{{ route('admin.customers.index') }}">View</a>
+                                    @php
+                                        $route = route('admin.customers.index');
+                                        if (auth()->user()->role->slug == 'customer') {
+                                            $route = url('admin/customers/'.auth()->user()->customer->id.'/docs');
+                                        }
+                                    @endphp
+                                    <a class="w-100 btn btn-sm btn-primary" href="{{ $route }}">View <i class="fas fa-link"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +106,7 @@
                                     </div>
                                     <h1 class="mt-1 mb-3">{{ $users->where('status', 1)->count() }}</h1>
                                     <div class="mb-0">
-                                        <a href="{{ route('admin.users.index') }}">View</a>
+                                        <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.users.index') }}">View <i class="fas fa-link"></i></a>
                                     </div>
                                 </div>
                             </div>

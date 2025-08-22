@@ -24,7 +24,7 @@ class CustomerDocument extends Model
         return $this->belongsTo(Customer::class);
     }
     public function gstYear(){
-        return $this->belongsTo(GstYear::class);
+        return $this->belongsTo(GSTYear::class);
     }
     public function uploader(){
         return $this->belongsTo(User::class, 'uploaded_by');

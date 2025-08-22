@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerDocument;
-use App\Models\GstYear;
+use App\Models\GSTYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,12 +14,18 @@ class CustomerDocumentController extends Controller
 {
     public function index(Customer $customer)
     {
-        $years = GstYear::orderBy('label','desc')->get();
+      	if (auth()->user()->role->slug == 'customer' && auth()->user()->id !== $customer->user_id) {
+          	abort(403, 'Unauthorized access.');
+        }
+        $years = GSTYear::orderBy('label','desc')->get();
         return view('admin.customers.docs.index', compact('customer','years'));
     }
 
     public function list(Request $request, Customer $customer)
     {
+      	if (auth()->user()->role->slug == 'customer' && auth()->user()->id !== $customer->user_id) {
+          	abort(403, 'Unauthorized access.');
+        }
         $q = CustomerDocument::with(['gstYear','uploader'])
             ->where('customer_id',$customer->id);
 
@@ -31,15 +37,19 @@ class CustomerDocumentController extends Controller
         // Return in a format your DataTable expects (or simple array)
         return response()->json([
             'data' => $docs->map(function($d){
-                return [
+              	$docRecords = [
                     'year'    => $d->gstYear?->label,
                     'type'    => strtoupper($d->doc_type),
                     'desc'    => e($d->description),
                     'file'    => '<a href="'.route('admin.customers.docs.download', [$d->customer_id, $d->id]).'" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i> Download</a>',
                     'by'      => $d->uploader?->name ?? '—',
                     'date'    => $d->created_at->format('d M Y'),
-                    'actions' => '<button class="btn btn-sm btn-danger deleteDoc" data-id="'.$d->id.'"><i class="fa fa-trash"></i></button>',
+                    'actions' => '',
                 ];
+              	if	(auth()->user()->hasPermission('customer_docs', 'can_add', auth()->id())) {
+                	$docRecords['actions'] = '<button class="btn btn-sm btn-danger deleteDoc" data-id="'.$d->id.'"><i class="fa fa-trash"></i></button>';
+                }
+                return $docRecords;
             })
         ]);
     }
@@ -47,7 +57,7 @@ class CustomerDocumentController extends Controller
     // Modal form
     public function form(Request $request, Customer $customer)
     {
-        $years = GstYear::orderBy('label','desc')->get();
+        $years = GSTYear::orderBy('label','desc')->get();
         return view('admin.customers.docs.partials.form', [
             'customer' => $customer,
             'years'    => $years,

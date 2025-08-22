@@ -68,16 +68,27 @@ class User extends Authenticatable
 
         // CUSTOMER: can only view/edit their own records
         if ($this->role->slug === 'customer') {
-            if ($recordOwnerId && $this->id !== $recordOwnerId) {
-                return false; // trying to access someone else's record
-            }
+            if ($recordOwnerId && $this->id !== $recordOwnerId) {  
+                return false; // cannot touch other customers’ records  
+            }  
 
-            // Customer permissions are usually fixed, but if you want DB-based:
-            $perm = $this->userPermissions()->whereHas('module', function($q) use ($moduleSlug) {
-                $q->where('slug', $moduleSlug);
-            })->first();
+            // First check user-specific permission (if any)  
+            $perm = $this->userPermissions()->whereHas('module', function($q) use ($moduleSlug) {  
+                $q->where('slug', $moduleSlug);  
+            })->first();  
 
-            return $perm && $perm->{$action};
+            if ($perm) {  
+                return $perm->{$action};  
+            }  
+
+            // Fallback: role permissions (what you defined in role_permissions table)  
+            $rolePerm = RolePermission::where('role_id', $this->role_id)  
+                ->whereHas('module', function($q) use ($moduleSlug) {  
+                    $q->where('slug', $moduleSlug);  
+                })  
+                ->first();  
+
+            return $rolePerm && $rolePerm->{$action};  
         }
 
         // ADMIN: check user-specific permissions first
@@ -102,5 +113,9 @@ class User extends Authenticatable
     public function canDo($moduleSlug, $action, $recordOwnerId = null)
     {
         return $this->hasPermission($moduleSlug, $action, $recordOwnerId);
+    }
+
+    public function customer() {
+        return $this->hasOne(Customer::class, 'user_id');
     }
 }

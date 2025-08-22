@@ -103,7 +103,7 @@
                 </div>
             </div>
 
-            @if(isset($customer) && !empty($customer->email))
+            @if(!isset($customer) && empty($customer->email))
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Password</label>
                     <div class="input-group">

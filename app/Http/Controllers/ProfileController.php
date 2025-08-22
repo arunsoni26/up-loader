@@ -32,7 +32,7 @@ class ProfileController extends Controller
         $user->name  = $request->name;
         $user->save();
 
-        return redirect()->route('profile')->with('success', 'Profile updated successfully!');
+        return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
     }
 
     // update password
@@ -44,7 +44,7 @@ class ProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->route('profile')
+            return redirect()->route('admin.profile')
                 ->withErrors($validator)
                 ->withInput()
                 ->with('active_tab', 'password');
@@ -53,7 +53,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->route('profile')
+            return redirect()->route('admin.profile')
                 ->withErrors(['current_password' => 'Current password does not match'])
                 ->with(['active_tab' => 'password']);
         }
@@ -61,7 +61,7 @@ class ProfileController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        return redirect()->route('profile')
+        return redirect()->route('admin.profile')
             ->with('success', 'Password updated successfully!')
             ->with('active_tab', 'password');
     }
@@ -75,7 +75,7 @@ class ProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->route('profile')
+            return redirect()->route('admin.profile')
                 ->withErrors($validator)
                 ->withInput()
                 ->with('active_tab', 'news'); // ✅ Keep news tab on error
@@ -124,7 +124,7 @@ class ProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->route('profile')
+            return redirect()->route('admin.profile')
                 ->withErrors($validator)
                 ->withInput()
                 ->with('active_tab', 'news');
@@ -149,7 +149,7 @@ class ProfileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->route('profile')
+            return redirect()->route('admin.profile')
                 ->withErrors($validator)
                 ->withInput()
                 ->with('active_tab', 'gallery');
