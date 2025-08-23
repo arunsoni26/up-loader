@@ -179,17 +179,32 @@ class ProfileController extends Controller
                 ->with('active_tab', 'gallery');
         }
 
-        $imagePath = $request->file('image')->store('banners', 'public');
+        if ($request->hasFile('image')) {
+            $image   = $request->file('image');
+            $userId  = Auth::id();
+            $path    = public_path("gallery/$userId");
+
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0755, true);
+            }
+
+            $imageName = 'banner_' . time() . '.' . $image->getClientOriginalExtension();
+
+            $image->move($path, $imageName);
+
+            $imagePath = "gallery/$userId/$imageName";
+        }
 
         bannerImage::create([
-            'user_id'     => Auth::id(),
-            'updated_by'  => Auth::id(),
+            'user_id'     => $userId,
+            'updated_by'  => $userId,
             'image'       => $imagePath,
             'description' => $request->bannerdescription,
         ]);
 
         return back()->with('success', 'Banner added successfully')->with('active_tab', 'gallery');
     }
+
 
     //Banner delete
     public function deleteBanner($id)

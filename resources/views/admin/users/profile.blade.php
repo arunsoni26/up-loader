@@ -370,7 +370,7 @@
                                     @forelse($gallery as $item)
                                     <div class="col-md-3 mb-3 zoom-item">
                                         <div class="card">
-                                            <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;">
+                                            <img src="{{ asset($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;">
                                             <div class="card-body">
                                                 <!-- <p class="card-text">{{ Str::limit($item->description, 50) }}</p> -->
                                                 <form action="{{ route('admin.banner.delete', $item->id) }}" method="POST">
@@ -393,7 +393,7 @@
                                     @forelse($trash as $item)
                                     <div class="col-md-3 mb-3 zoom-item">
                                         <div class="card border-warning">
-                                            <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;">
+                                            <img src="{{ asset($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;">
                                             <div class="card-body">
                                                 <!-- <p class="card-text">{{ Str::limit($item->description, 50) }}</p> -->
                                                 <form action="{{ route('admin.banner.restore', $item->id) }}" method="POST">
