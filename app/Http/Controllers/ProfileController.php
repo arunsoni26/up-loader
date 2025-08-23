@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -165,6 +166,46 @@ class ProfileController extends Controller
     }
 
     //Banner add
+    // public function addBanner(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+    //         'bannerdescription' => 'required|string|max:500',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return redirect()->route('admin.profile')
+    //             ->withErrors($validator)
+    //             ->withInput()
+    //             ->with('active_tab', 'gallery');
+    //     }
+
+    //     if ($request->hasFile('image')) {
+    //         $image   = $request->file('image');
+    //         $userId  = Auth::id();
+    //         $path    = public_path("gallery/$userId");
+
+    //         if (!File::exists($path)) {
+    //             File::makeDirectory($path, 0755, true);
+    //         }
+
+    //         $imageName = 'banner_' . time() . '.' . $image->getClientOriginalExtension();
+
+    //         $image->move($path, $imageName);
+
+    //         $imagePath = "gallery/$userId/$imageName";
+    //     }
+
+    //     bannerImage::create([
+    //         'user_id'     => $userId,
+    //         'updated_by'  => $userId,
+    //         'image'       => $imagePath,
+    //         'description' => $request->bannerdescription,
+    //     ]);
+
+    //     return back()->with('success', 'Banner added successfully')->with('active_tab', 'gallery');
+    // }
+
     public function addBanner(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -179,32 +220,31 @@ class ProfileController extends Controller
                 ->with('active_tab', 'gallery');
         }
 
+        $userId = Auth::id();
+        $imagePath = null;
+
         if ($request->hasFile('image')) {
-            $image   = $request->file('image');
-            $userId  = Auth::id();
-            $path    = public_path("gallery/$userId");
+            $image = $request->file('image');
 
-            if (!File::exists($path)) {
-                File::makeDirectory($path, 0755, true);
-            }
+            // Generate unique filename
+            $imageName = 'banner_' . now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $image->getClientOriginalExtension();
 
-            $imageName = 'banner_' . time() . '.' . $image->getClientOriginalExtension();
+            // Upload to S3 bucket
+            $path = $image->storeAs("gallery/$userId", $imageName, 's3');
 
-            $image->move($path, $imageName);
-
-            $imagePath = "gallery/$userId/$imageName";
+            // Store path for DB
+            $imagePath = $path;
         }
 
         bannerImage::create([
             'user_id'     => $userId,
             'updated_by'  => $userId,
-            'image'       => $imagePath,
+            'image'       => $imagePath, // save only path in DB
             'description' => $request->bannerdescription,
         ]);
 
         return back()->with('success', 'Banner added successfully')->with('active_tab', 'gallery');
     }
-
 
     //Banner delete
     public function deleteBanner($id)
