@@ -74,7 +74,7 @@
                                 <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                             @endif
-                            <form action="{{ route('admin.settings.update') }}" method="POST">
+                            <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-8">
@@ -89,10 +89,13 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="text-center">
-                                            <img alt="Charles Hall" src="img/avatars/avatar.jpg" class="rounded-circle img-responsive mt-2"
-                                                width="128" height="128" />
+                                            <img id="profilePreview" src="{{ asset($userInfo->image) }}" alt="Profile Picture" class="rounded-circle img-responsive mt-2"
+                                                width="128" height="128">
                                             <div class="mt-2">
-                                                <span class="btn btn-primary"><i class="fas fa-upload"></i> Upload</span>
+                                                <label class="btn btn-primary">
+                                                    <i class="fas fa-upload"></i> Upload
+                                                    <input type="file" name="image" accept="image/*" hidden onchange="previewImage(event)">
+                                                </label>
                                             </div>
                                             <small>For best results, use an image at least 128px by 128px in .jpg format</small>
                                         </div>
@@ -478,5 +481,15 @@
             });
         });
     });
+</script>
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('profilePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
 </script>
 @endpush

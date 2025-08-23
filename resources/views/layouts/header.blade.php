@@ -27,6 +27,38 @@
     <link href="{{asset('css')}}/toastr.min.css" rel="stylesheet">
 
     <script src="{{ asset('js/settings.js') }}"></script>
+    <style>
+        .running-border {
+            position: relative;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            padding: 10px;
+            background: linear-gradient(white, white) padding-box,
+                linear-gradient(90deg, red, orange, yellow, green, blue, purple, red) border-box;
+            background-size: 300% 300%;
+            animation: borderMove 5s linear infinite;
+        }
+
+        @keyframes borderMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        .zoom-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .zoom-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 </head>
 <body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default">
 <div class="wrapper">

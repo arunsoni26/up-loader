@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
 
 class ProfileController extends Controller
 {
@@ -22,14 +23,37 @@ class ProfileController extends Controller
     }
 
     // update profile
+    // update profile
     public function updateProfile(Request $request)
     {
         $request->validate([
             'name'  => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = Auth::user();
         $user->name  = $request->name;
+        if ($request->hasFile('image')) {
+            $image      = $request->file('image');
+            $userId     = $user->id;
+            $path       = public_path("profile/$userId");
+
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0755, true);
+            }
+
+            if (!empty($user->image)) {
+                $existingImage = public_path($user->image);
+                if (File::exists($existingImage)) {
+                    File::delete($existingImage);
+                }
+            }
+
+            $imageName = 'profile_pic.' . $image->getClientOriginalExtension();
+            $image->move($path, $imageName);
+
+            $user->image = "profile/$userId/$imageName";
+        }
         $user->save();
 
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
