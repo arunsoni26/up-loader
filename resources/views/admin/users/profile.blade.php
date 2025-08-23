@@ -477,7 +477,7 @@
                 const description = this.dataset.description;
                 const color = this.dataset.color;
 
-                editForm.action = `/news/${id}`; // Route for update
+                editForm.action = `/admin/news/${id}`;
                 editDescription.value = description;
                 editColor.value = color;
 
