@@ -1,6 +1,6 @@
 <nav id="sidebar" class="sidebar js-sidebar">
     <div class="sidebar-content js-simplebar">
-        <a class='sidebar-brand' href='index.html'>
+        <a class='sidebar-brand' href="{{ route('admin.dashboard') }}">
             <span class="sidebar-brand-text align-middle">
                 {{ env('APP_NAME') }}
                 <sup><small class="badge bg-primary text-uppercase">Pro</small></sup>
@@ -24,7 +24,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-start">
                         @if(canDo('permissions','can_view'))
-                            <a class='dropdown-item' href='{{ route('admin.profile') }}'><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+                            <a class='dropdown-item' href="{{ route('admin.profile') }}"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
                         @endif
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Log out</a>
@@ -40,7 +40,7 @@
                 <!-- Pages -->
             </li>
             <li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <a class='sidebar-link' href='{{ route('admin.dashboard') }}'>
+                <a class='sidebar-link' href="{{ route('admin.dashboard') }}">
                     <i class="fas fa-money-check"></i>
                     <span class="align-middle">Dashboards</span>
                 </a>
@@ -48,7 +48,7 @@
             
             @if(canDo('permissions','can_add'))
                 <li class="sidebar-item {{ request()->routeIs('admin.role-permissions') ? 'active' : '' }}">
-                    <a class='sidebar-link' href='{{ route('admin.role-permissions') }}'>
+                    <a class='sidebar-link' href="{{ route('admin.role-permissions') }}">
                         <i class="fas fa-user-lock"></i>
                         <span class="align-middle">Roles & Permissions</span>
                     </a>
@@ -57,7 +57,7 @@
 
             @if(canDo('users','can_add'))
                 <li class="sidebar-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
-                    <a class='sidebar-link' href='{{ route('admin.users.index') }}'>
+                    <a class='sidebar-link' href="{{ route('admin.users.index') }}">
                         <i class="fas fa-users"></i>
                         <span class="align-middle">Users</span>
                     </a>
@@ -66,7 +66,7 @@
             
             @if(canDo('customers','can_add'))
                 <li class="sidebar-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
-                    <a class='sidebar-link' href='{{ route('admin.customers.index') }}'>
+                    <a class='sidebar-link' href="{{ route('admin.customers.index') }}">
                         <i class="fas fa-user-tie"></i>
                         <span class="align-middle">Customers</span>
                     </a>

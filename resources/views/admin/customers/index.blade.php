@@ -149,7 +149,10 @@
                     { data: 'status_toggle', orderable: false, searchable: false },
                     { data: 'dashboard_toggle', orderable: false, searchable: false },
                     { data: 'actions', orderable: false, searchable: false, className: 'text-center' }
-                ]
+                ],
+                createdRow: function (row, data, dataIndex) {
+                    $(row).addClass('zoom-item');
+                }
             });
         }
 

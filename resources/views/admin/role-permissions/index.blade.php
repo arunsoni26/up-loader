@@ -18,7 +18,7 @@
                     </thead>
                     <tbody>
                         @foreach($roles as $role)
-                        <tr>
+                        <tr class="zoom-item">
                             <td class="fw-semibold">{{ ucfirst($role->name) }}</td>
                             <td class="text-center">
                                 <button class="btn btn-outline-primary btn-sm add-permissions-btn" 
