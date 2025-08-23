@@ -18,7 +18,7 @@
                     @if(in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
                         <!-- active customers -->
                         <div class="col-sm-3">
-                            <div class="card">
+                            <div class="card zoom-item">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col mt-0">
@@ -41,7 +41,7 @@
 
                         <!-- inactive customers -->
                         <div class="col-sm-3">
-                            <div class="card">
+                            <div class="card zoom-item">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col mt-0">
@@ -63,7 +63,7 @@
                         </div>
                     @endif
                     <div class="col-sm-3">
-                        <div class="card">
+                        <div class="card zoom-item">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col mt-0">
@@ -91,7 +91,7 @@
                     </div>
                     @if(in_array(auth()->user()->role->slug, ['superadmin']))
                         <div class="col-sm-3">
-                            <div class="card">
+                            <div class="card zoom-item">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col mt-0">
