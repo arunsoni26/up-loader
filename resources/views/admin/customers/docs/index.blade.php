@@ -70,7 +70,7 @@
         }, function(res){
             let rows = '';
             (res.data || []).forEach(r => {
-                rows += `<tr>
+                rows += `<tr class="zoom-item">
                     <td>${r.year ?? '-'}</td>
                     <td>${r.type ?? '-'}</td>
                     <td>${r.desc ?? '-'}</td>
