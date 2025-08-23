@@ -217,7 +217,7 @@
             let html = '';
             data.forEach(group => {
                 var createdAt = moment(group.created_at);
-                html += `<tr>
+                html += `<tr class="zoom-item">
                             <td>${group.name}</td>
                             <td>${createdAt.format('MMMM D, YYYY')}</td>
                             <td>
