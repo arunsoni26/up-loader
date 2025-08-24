@@ -46,7 +46,7 @@
                     <div class="col-md-6 mb-3">
                         <strong>PAN:</strong> {{ $customer->pan ?? 'N/A' }}<br>
                         @if($customer->pan_doc)
-                            <a href="{{ asset('uploads/'.$customer->pan_doc) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+                            <a href="{{ Storage::disk('s3')->temporaryUrl($customer->pan_doc, now()->addMinutes(1), ['ResponseContentDisposition' => 'attachment; filename="' . basename($customer->pan_doc) . '"']) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
                                 <i class="fa fa-eye"></i> View PAN Doc
                             </a>
                         @endif

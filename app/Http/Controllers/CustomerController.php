@@ -7,6 +7,8 @@ use App\Models\CustomerGroup;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
@@ -94,7 +96,9 @@ class CustomerController extends Controller
 
     public function save(Request $request)
     {
-        $request->validate([
+        $customerId = $request->id;
+
+        $rules = [
             'name' => 'required|string|max:255',
             'gst_name' => 'nullable|string|max:255',
             'pan' => 'nullable|string|max:20',
@@ -102,16 +106,36 @@ class CustomerController extends Controller
             'client_type_status' => 'nullable|string|max:50',
             'fathers_name' => 'nullable|string|max:255',
             'group_id' => 'nullable|integer|exists:customer_groups,id',
-            'email' => 'nullable|email|max:255|unique:users,email,' . $request->user_id,
             'password' => $request->id ? 'nullable|min:6|confirmed' : 'required|min:6|confirmed',
-        ]);
+        ];
+        if ($customerId) {
+            $rules['email'] = [
+                'nullable',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore(
+                    optional(Customer::find($customerId))->user_id
+                ),
+            ];
+        } else {
+            // Create case → email required
+            $rules['email'] = [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email'),
+            ];
+        }
+
+        $request->validate($rules);
 
         DB::beginTransaction();
 
         try {
             // Save to users table
-            if ($request->user_id) {
-                $user = User::find($request->user_id);
+            $customerDetails = Customer::find($customerId);
+            if ($customerDetails->user_id) {
+                $user = User::find($customerDetails->user_id);
             } else {
                 $user = new User();
             }
@@ -148,6 +172,41 @@ class CustomerController extends Controller
             $customer->aadhar = $request->aadhar;
             $customer->address = $request->address;
             $customer->updated_by = auth()->id();
+
+            
+            // ===== S3 Uploads =====
+            $disk = 's3'; // change to 'local' for dev if you like
+            $base = "customers_details/{$user->id}";
+
+            // PAN
+            if ($request->hasFile('pan_doc')) {
+                // delete old if present
+                if (!empty($customer->pan_doc)) {
+                    Storage::disk($disk)->delete($customer->pan_doc);
+                }
+                $panPath = $request->file('pan_doc')->store("$base/pan", $disk);
+                $customer->pan_doc = $panPath; // store path in DB
+            }
+
+            // GST
+            if ($request->hasFile('gst_doc')) {
+                if (!empty($customer->gst_doc)) {
+                    Storage::disk($disk)->delete($customer->gst_doc);
+                }
+                $gstPath = $request->file('gst_doc')->store("$base/gst", $disk);
+                $customer->gst_doc = $gstPath;
+            }
+
+            // Aadhar
+            if ($request->hasFile('aadhar_doc')) {
+                if (!empty($customer->aadhar_doc)) {
+                    Storage::disk($disk)->delete($customer->aadhar_doc);
+                }
+                $aadharPath = $request->file('aadhar_doc')->store("$base/aadhar", $disk);
+                $customer->aadhar_doc = $aadharPath;
+            }
+            // ===== /S3 Uploads =====
+
             $customer->save();
 
             DB::commit();

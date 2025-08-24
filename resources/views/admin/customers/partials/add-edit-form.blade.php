@@ -99,7 +99,7 @@
                 <label class="form-label">Email</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                    <input type="email" name="email" class="form-control" value="{{ $customer->email ?? '' }}" required>
+                    <input type="email" name="email" class="form-control" value="{{ $customer->email ?? '' }}" @if($customer && isset($customer->email)) readonly @else required @endif>
                 </div>
             </div>
 
@@ -254,7 +254,7 @@
                     success: function (data) {
                         console.log('user_data----->>>', data);
                         if (data.code == 200) {
-                            toastr.success(data.msg);
+                            toastr.success('Customer saved successfully');
                             setTimeout(() => {
                                 window.location.reload();
                             }, 1000);
@@ -266,7 +266,7 @@
                     },
                     error: function (err) {
                         console.log('err----->>>', err);
-                        toastr.error("User role not found");
+                        toastr.error("Error occured");
                         submitButton.disabled = false;
                         submitButton.innerHTML = 'Save';
                     }
