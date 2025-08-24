@@ -25,40 +25,72 @@ class ProfileController extends Controller
 
     // update profile
     // update profile
+    // public function updateProfile(Request $request)
+    // {
+    //     $request->validate([
+    //         'name'  => 'required|string|max:255',
+    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //     ]);
+
+    //     $user = Auth::user();
+    //     $user->name  = $request->name;
+    //     if ($request->hasFile('image')) {
+    //         $image      = $request->file('image');
+    //         $userId     = $user->id;
+    //         $path       = public_path("profile/$userId");
+
+    //         if (!File::exists($path)) {
+    //             File::makeDirectory($path, 0755, true);
+    //         }
+
+    //         if (!empty($user->image)) {
+    //             $existingImage = public_path($user->image);
+    //             if (File::exists($existingImage)) {
+    //                 File::delete($existingImage);
+    //             }
+    //         }
+
+    //         $imageName = 'profile_pic.' . $image->getClientOriginalExtension();
+    //         $image->move($path, $imageName);
+
+    //         $user->image = "profile/$userId/$imageName";
+    //     }
+    //     $user->save();
+
+    //     return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
+    // }
+
     public function updateProfile(Request $request)
     {
         $request->validate([
             'name'  => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $user = Auth::user();
         $user->name  = $request->name;
+
         if ($request->hasFile('image')) {
-            $image      = $request->file('image');
-            $userId     = $user->id;
-            $path       = public_path("profile/$userId");
+            $image   = $request->file('image');
+            $userId  = $user->id;
 
-            if (!File::exists($path)) {
-                File::makeDirectory($path, 0755, true);
+            $imageName = "profile_pic." . $image->getClientOriginalExtension();
+            $path = "profile/$userId/$imageName";
+
+            if (!empty($user->image) && Storage::disk('s3')->exists($user->image)) {
+                Storage::disk('s3')->delete($user->image);
             }
 
-            if (!empty($user->image)) {
-                $existingImage = public_path($user->image);
-                if (File::exists($existingImage)) {
-                    File::delete($existingImage);
-                }
-            }
+            Storage::disk('s3')->putFileAs("profile/$userId", $image, $imageName);
 
-            $imageName = 'profile_pic.' . $image->getClientOriginalExtension();
-            $image->move($path, $imageName);
-
-            $user->image = "profile/$userId/$imageName";
+            $user->image = $path;
         }
+
         $user->save();
 
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
     }
+
 
     // update password
     public function updatePassword(Request $request)

@@ -1,3 +1,12 @@
+<style>
+    .input-group-text {
+        background: #f8f9fa;
+        border-right: none;
+    }
+    .form-control, .form-select {
+        border-left: none;
+    }
+</style>
 <div class="modal-header">
     <h5 class="modal-title text-primary">
         <i class="fas fa-user-edit me-2"></i> {{ isset($customer) ? 'Edit' : 'Add' }} Customer
@@ -15,7 +24,7 @@
         <div class="row g-3">
 
             {{-- Name --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Name</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -24,7 +33,7 @@
             </div>
 
             {{-- GST Name --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">GST Name</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-building"></i></span>
@@ -33,7 +42,7 @@
             </div>
 
             {{-- Father's Name --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Father's Name</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
@@ -42,7 +51,7 @@
             </div>
 
             {{-- PAN --}}
-            <div class="col-md-3">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">PAN</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-id-card"></i></span>
@@ -51,7 +60,7 @@
             </div>
 
             {{-- PAN Document --}}
-            <div class="col-md-3">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">PAN Doc</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-file-arrow-up"></i></span>
@@ -63,7 +72,7 @@
             </div>
 
             {{-- Client Type --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Client Type</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
@@ -77,7 +86,7 @@
             </div>
 
             {{-- Code --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Code</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-barcode"></i></span>
@@ -86,7 +95,7 @@
             </div>
 
             {{-- Mobile --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Mobile No</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
@@ -95,7 +104,7 @@
             </div>
 
             {{-- Email --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Email</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
@@ -104,7 +113,7 @@
             </div>
 
             @if(!isset($customer) && empty($customer->email))
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 zoom-item mb-3">
                     <label class="form-label">Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -112,7 +121,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 zoom-item mb-3">
                     <label class="form-label">Confirm Password</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -122,7 +131,7 @@
             @endif
 
             {{-- City --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">City</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-city"></i></span>
@@ -131,7 +140,7 @@
             </div>
 
             {{-- Group --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Group</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-users"></i></span>
@@ -147,7 +156,7 @@
             </div>
 
             {{-- Date of Birth --}}
-            <div class="col-md-6">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Date of Birth</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
@@ -156,7 +165,7 @@
             </div>
 
             {{-- GST --}}
-            <div class="col-md-3">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">GST</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-file-invoice"></i></span>
@@ -165,7 +174,7 @@
             </div>
 
             {{-- GST Doc --}}
-            <div class="col-md-3">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">GST Doc</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-file-arrow-up"></i></span>
@@ -177,7 +186,7 @@
             </div>
 
             {{-- Aadhar --}}
-            <div class="col-md-3">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Aadhar</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
@@ -186,7 +195,7 @@
             </div>
 
             {{-- Aadhar Doc --}}
-            <div class="col-md-3">
+            <div class="col-md-4 zoom-item">
                 <label class="form-label">Aadhar Doc</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-file-arrow-up"></i></span>
@@ -198,7 +207,7 @@
             </div>
 
             {{-- Address --}}
-            <div class="col-12">
+            <div class="col-8 zoom-item">
                 <label class="form-label">Address</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-location-dot"></i></span>

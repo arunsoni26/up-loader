@@ -3,7 +3,7 @@
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 
-<form id="docsForm" enctype="multipart/form-data">
+<!-- <form id="docsForm" enctype="multipart/form-data">
     @csrf
     <div class="modal-body">
         <input type="hidden" name="customer_id" value="{{ $customer->id }}">
@@ -69,7 +69,90 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times"></i> Close</button>
         <button type="submit" id="docsSubmit" class="btn btn-success"><i class="fa fa-save"></i> Upload</button>
     </div>
+</form> -->
+
+<form id="docsForm" enctype="multipart/form-data">
+    @csrf
+    <div class="modal-body">
+        <input type="hidden" name="customer_id" value="{{ $customer->id }}">
+
+        <!-- GST Year -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-primary">GST Year</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
+                    <select class="form-select shadow-sm" name="gst_year_id" id="docs_gst_year" required>
+                        <option value="">Select GST Year</option>
+                        @foreach($years as $y)
+                            <option value="{{ $y->id }}">{{ $y->label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <small class="text-primary d-inline-block mt-2" id="quickAddYear" style="cursor:pointer;">
+                    <i class="fa fa-plus-circle"></i> Add new GST year
+                </small>
+            </div>
+        </div>
+
+        @php
+            $sections = $types; // key => label
+        @endphp
+
+        <!-- Document Sections -->
+        <div class="row">
+            @foreach($sections as $typeKey => $typeLabel)
+                <div class="col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100 zoom-item">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <strong class="text-dark">
+                                <i class="fa fa-folder-open me-2 text-primary"></i>{{ $typeLabel }}
+                            </strong>
+                            <button type="button" class="btn btn-sm btn-outline-primary addRow" data-type="{{ $typeKey }}">
+                                <i class="fa fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="docRows" id="rows_{{ $typeKey }}">
+                                <!-- First Row -->
+                                <div class="row g-2 align-items-end docRow">
+                                    <div class="col-md-7">
+                                        <label class="form-label mb-1">Description</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fa fa-text-width"></i></span>
+                                            <input type="text" class="form-control shadow-sm" name="docs[{{ $typeKey }}][0][description]" placeholder="Short description">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label mb-1">File</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fa fa-file"></i></span>
+                                            <input type="file" class="form-control shadow-sm" name="docs[{{ $typeKey }}][0][file]">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <small class="text-muted">📌 Max file size: 10MB each.</small>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fa fa-times"></i> Close
+        </button>
+        <button type="submit" id="docsSubmit" class="btn btn-success">
+            <i class="fa fa-upload"></i> Upload
+        </button>
+    </div>
 </form>
+
+
 
 <script>
 (function(){

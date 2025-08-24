@@ -1,125 +1,314 @@
 @extends('layouts.admin-app')
 
 @section('content')
-    <div class="row mb-2 mb-xl-3">
-        <div class="col-auto d-none d-sm-block">
-            <h3>Dashboard</h3>
-        </div>
+<div class="row mb-2 mb-xl-3">
+    <div class="col-auto d-none d-sm-block">
+        <h3>Dashboard</h3>
+    </div>
 
-        <!-- <div class="col-auto ms-auto text-end mt-n1">
+    <!-- <div class="col-auto ms-auto text-end mt-n1">
             <a href="#" class="btn btn-light bg-white me-2">Invite a Friend</a>
             <a href="#" class="btn btn-primary">New Project</a>
         </div> -->
-    </div>
-    <div class="row">
-        <div class="col-xl-12 col-xxl-12 d-flex">
-            <div class="w-100">
-                <div class="row">
-                    @if(in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
-                        <!-- active customers -->
-                        <div class="col-sm-3">
-                            <div class="card zoom-item">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col mt-0">
-                                            <h5 class="card-title">Active Customers</h5>
-                                        </div>
+</div>
+<div class="row">
+    <div class="col-xl-12 col-xxl-12 d-flex">
+        <div class="w-100">
+            <div class="row">
+                @if(in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+                <!-- active customers -->
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Active Customers</h5>
+                                </div>
 
-                                        <div class="col-auto">
-                                            <div class="stat text-success">
-                                                <i class="fas fa-user-tie"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h1 class="mt-1 mb-3">{{ $customers->where('status', 1)->count() }}</h1>
-                                    <div class="mb-0">
-                                        <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.customers.index') }}">View <i class="fas fa-link"></i></a>
+                                <div class="col-auto">
+                                    <div class="stat text-success">
+                                        <i class="fas fa-user-tie"></i>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- inactive customers -->
-                        <div class="col-sm-3">
-                            <div class="card zoom-item">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col mt-0">
-                                            <h5 class="card-title">In-active Customers</h5>
-                                        </div>
-
-                                        <div class="col-auto">
-                                            <div class="stat text-danger">
-                                                <i class="fas fa-user-tie"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h1 class="mt-1 mb-3">{{ $customers->where('status', 0)->count() }}</h1>
-                                    <div class="mb-0">
-                                        <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.customers.index') }}">View <i class="fas fa-link"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="col-sm-3">
-                        <div class="card zoom-item">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col mt-0">
-                                        <h5 class="card-title">Customer Docs</h5>
-                                    </div>
-                                    
-                                    <div class="col-auto">
-                                        <div class="stat text-primary">
-                                            <i class="align-middle" data-feather="users"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h1 class="mt-1 mb-3">{{ $customerDocs->count() }}</h1>
-                                <div class="mb-0">
-                                    @php
-                                        $route = route('admin.customers.index');
-                                        if (auth()->user()->role->slug == 'customer') {
-                                            $route = url('admin/customers/'.auth()->user()->customer->id.'/docs');
-                                        }
-                                    @endphp
-                                    <a class="w-100 btn btn-sm btn-primary" href="{{ $route }}">View <i class="fas fa-link"></i></a>
-                                </div>
+                            <h1 class="mt-1 mb-3">{{ $customers->where('status', 1)->count() }}</h1>
+                            <div class="mb-0">
+                                <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.customers.index') }}">View <i class="fas fa-link"></i></a>
                             </div>
                         </div>
                     </div>
-                    @if(in_array(auth()->user()->role->slug, ['superadmin']))
-                        <div class="col-sm-3">
-                            <div class="card zoom-item">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col mt-0">
-                                            <h5 class="card-title">Users</h5>
-                                        </div>
+                </div>
 
-                                        <div class="col-auto">
-                                            <div class="stat text-primary">
-                                                <i class="fas fa-users"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h1 class="mt-1 mb-3">{{ $users->where('status', 1)->count() }}</h1>
-                                    <div class="mb-0">
-                                        <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.users.index') }}">View <i class="fas fa-link"></i></a>
+                <!-- inactive customers -->
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">In-active Customers</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-danger">
+                                        <i class="fas fa-user-tie"></i>
                                     </div>
                                 </div>
                             </div>
+                            <h1 class="mt-1 mb-3">{{ $customers->where('status', 0)->count() }}</h1>
+                            <div class="mb-0">
+                                <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.customers.index') }}">View <i class="fas fa-link"></i></a>
+                            </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
+                @endif
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Customer Active Docs</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="file"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">{{ $customerActiveDocs->count() }}</h1>
+                            <div class="mb-0">
+                                @php
+                                $route = route('admin.customers.index');
+                                if (auth()->user()->role->slug == 'customer') {
+                                $route = url('admin/customers/'.auth()->user()->customer->id.'/docs');
+                                }
+                                @endphp
+                                <a class="w-100 btn btn-sm btn-primary" href="{{ $route }}">View <i class="fas fa-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Customer Inactive Docs</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="file"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">{{ $customerInActiveDocs->count() }}</h1>
+                            <div class="mb-0">
+                                @php
+                                $route = route('admin.customers.index');
+                                if (auth()->user()->role->slug == 'customer') {
+                                $route = url('admin/customers/'.auth()->user()->customer->id.'/docs');
+                                }
+                                @endphp
+                                <a class="w-100 btn btn-sm btn-primary" href="{{ $route }}">View <i class="fas fa-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Customer Deleted Docs</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="align-middle" data-feather="file"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">{{ $customerDeleteDocs->count() }}</h1>
+                            <div class="mb-0">
+                                @php
+                                $route = route('admin.customers.index');
+                                if (auth()->user()->role->slug == 'customer') {
+                                $route = url('admin/customers/'.auth()->user()->customer->id.'/docs');
+                                }
+                                @endphp
+                                <a class="w-100 btn btn-sm btn-primary" href="{{ $route }}">View <i class="fas fa-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if(in_array(auth()->user()->role->slug, ['superadmin']))
+                <div class="col-sm-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Users</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">{{ $users->where('status', 1)->count() }}</h1>
+                            <div class="mb-0">
+                                <a class="w-100 btn btn-sm btn-primary" href="{{ route('admin.users.index') }}">View <i class="fas fa-link"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
 
+    <div class="col-xl-6 col-xxl-6 d-flex">
+        <div class="card">
+            <h5 style="padding-top:20px; text-align:center;">📈 Daily Customer Document Uploads</h5>
+            <div class="card-header d-flex justify-content-between">
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="d-flex">
+                    <input type="date" name="start_date" value="{{ $startDate }}" class="form-control me-2">
+                    <input type="date" name="end_date" value="{{ $endDate }}" class="form-control me-2">
+                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                </form>
+            </div>
+            <div class="card-body">
+                <canvas class="zoom-item" id="documentsLineChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-xl-6 col-xxl-6 d-flex">
+        <div class="card">
+            <h5 style="padding-top:20px; text-align:center;">🍩 Upload Distribution</h5>
+            <div class="card-body" style="height:400px;">
+                <canvas class="zoom-item" id="documentsDonutChart" width="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Prepare labels and data
+        const dates = @json($documentsPerDay -> pluck('date'));
+        const totals = @json($documentsPerDay -> pluck('total'));
+
+        const donutData = totals.map(val => val === 0 ? 0.01 : val);
+        // LINE CHART
+        const ctxLine = document.getElementById('documentsLineChart').getContext('2d');
+
+        new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: '', // hide label for cleaner look
+                    data: totals,
+                    borderColor: '#3b8cff',   // blue line
+                    backgroundColor: 'rgba(59, 140, 255, 0.1)', // light blue fill
+                    borderWidth: 2,
+                    tension: 0.4, // smooth curve
+                    pointRadius: 0, // hide dots
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // no legend
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false // no vertical grid lines
+                        },
+                        ticks: {
+                            maxTicksLimit: 6, // fewer labels for cleaner look
+                            autoSkip: true
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: "rgba(0,0,0,0.05)", // very subtle horizontal grid
+                            drawBorder: false
+                        },
+                        ticks: {
+                            stepSize: 5 // adjust depending on values
+                        }
+                    }
+                }
+            }
+        });
+
+        // Generate dynamic colors for donut chart
+        const colors = totals.map(() =>
+            `rgba(${Math.floor(Math.random()*256)}, ${Math.floor(Math.random()*256)}, ${Math.floor(Math.random()*256)}, 0.6)`
+        );
+
+      
+         const ctxDonut = document.getElementById('documentsDonutChart').getContext('2d');
+
+        new Chart(ctxDonut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Active Docs', 'Inactive Docs', 'Deleted Docs'],
+                datasets: [{
+                    label: 'Documents',
+                    data: [{{ $activeCount }}, {{ $inactiveCount }}, {{ $deletedCount }}],
+                    backgroundColor: ['#5b996aff', '#b49538ff', '#a15159ff'], // green, yellow, red
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+@endpush
+
 <!-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
@@ -378,4 +567,3 @@
     }, 15000);
   });
 </script> -->
-@endpush

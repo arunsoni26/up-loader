@@ -89,8 +89,9 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="text-center">
-                                            <img id="profilePreview" src="{{ asset($userInfo->image) }}" alt="Profile Picture" class="rounded-circle img-responsive mt-2"
+                                            <img id="profilePreview" src="{{ Storage::disk('s3')->url($userInfo->image) }}" alt="Profile Image" class="rounded-circle img-responsive mt-2"
                                                 width="128" height="128">
+                                            <!-- <img id="profilePreview" src="{{ asset($userInfo->image) }}" alt="Profile Picture" class="rounded-circle img-responsive mt-2" -->
                                             <div class="mt-2">
                                                 <label class="btn btn-primary">
                                                     <i class="fas fa-upload"></i> Upload
@@ -476,7 +477,7 @@
                 const description = this.dataset.description;
                 const color = this.dataset.color;
 
-                editForm.action = `/news/${id}`; // Route for update
+                editForm.action = `/admin/news/${id}`;
                 editDescription.value = description;
                 editColor.value = color;
 
