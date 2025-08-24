@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDocumentController;
+use App\Http\Controllers\CustomerLedgerController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\GstYearController;
 use App\Http\Controllers\PermissionController;
@@ -54,6 +55,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 Route::post('/toggle-status/{id}', [App\Http\Controllers\UserController::class,'toggleStatus'])->name('toggle-status');
                 Route::delete('/delete/{id}', [App\Http\Controllers\UserController::class,'destroy'])->name('delete');
             });
+        });
+        
+        // routes/web.php
+        Route::group(['prefix' => 'customers/{customer}/ledger', 'as' => 'customers.ledger.'], function () {
+            Route::get('/', [CustomerLedgerController::class, 'index'])->name('index'); // page
+            Route::get('/list', [CustomerLedgerController::class, 'list'])->name('list'); // ajax
+            Route::post('/save', [CustomerLedgerController::class, 'save'])->name('save'); // add/edit
+            Route::delete('/delete/{ledger}', [CustomerLedgerController::class, 'destroy'])->name('delete');
         });
 
         Route::middleware(['permission:customers,can_view'])->group(function () {
