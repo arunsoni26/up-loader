@@ -29,31 +29,65 @@ class DashboardController extends Controller
     
     public function index(Request $request)
     {
-        if (auth()->user()->role->slug == 'customer' && auth()->user()->customer->hide_dashboard == 0) {
-            return view('admin.hide-dashboard');
+        $user = auth()->user();
+        $roleSlug = $user->role->slug;
+
+        // Case: customer role
+        if ($roleSlug === 'customer') {
+            if ($user->customer->hide_dashboard == 0) {
+                return view('admin.hide-dashboard');
+            }
+
+            // Only this customer's records
+            $customers = Customer::where('id', $user->customer->id)->get();
+            $users = collect(); // no need to show other users
+
+            $customerActiveDocs = DB::table('customer_documents')
+                ->join('customers', 'customers.id', '=', 'customer_documents.customer_id')
+                ->where('customer_documents.customer_id', $user->customer->id)
+                ->where('customers.status', 1)
+                ->whereNull('customer_documents.deleted_at')
+                ->select('customer_documents.*')
+                ->get();
+
+            $customerInActiveDocs = DB::table('customer_documents')
+                ->join('customers', 'customers.id', '=', 'customer_documents.customer_id')
+                ->where('customer_documents.customer_id', $user->customer->id)
+                ->where('customers.status', 0)
+                ->whereNull('customer_documents.deleted_at')
+                ->select('customer_documents.*')
+                ->get();
+
+            $customerDeleteDocs = DB::table('customer_documents')
+                ->where('customer_id', $user->customer->id)
+                ->whereNotNull('deleted_at')
+                ->get();
+        }
+        // Case: admin/superadmin
+        else {
+            $customers = Customer::all();
+            $users = User::where('role_id', 2)->get();
+
+            $customerActiveDocs = DB::table('customer_documents')
+                ->join('customers', 'customers.id', '=', 'customer_documents.customer_id')
+                ->where('customers.status', 1)
+                ->whereNull('customer_documents.deleted_at')
+                ->select('customer_documents.*')
+                ->get();
+
+            $customerInActiveDocs = DB::table('customer_documents')
+                ->join('customers', 'customers.id', '=', 'customer_documents.customer_id')
+                ->where('customers.status', 0)
+                ->whereNull('customer_documents.deleted_at')
+                ->select('customer_documents.*')
+                ->get();
+
+            $customerDeleteDocs = DB::table('customer_documents')
+                ->whereNotNull('deleted_at')
+                ->get();
         }
 
-        $customers = Customer::all();
-        $users = User::where('role_id', 2)->get();
-
-        $customerActiveDocs = DB::table('customer_documents')
-            ->join('customers', 'customers.id', '=', 'customer_documents.customer_id')
-            ->where('customers.status', 1)
-            ->whereNull('customer_documents.deleted_at')
-            ->select('customer_documents.*')
-            ->get();
-
-        $customerInActiveDocs = DB::table('customer_documents')
-            ->join('customers', 'customers.id', '=', 'customer_documents.customer_id')
-            ->where('customers.status', 0)
-            ->whereNull('customer_documents.deleted_at')
-            ->select('customer_documents.*')
-            ->get();
-
-        $customerDeleteDocs = DB::table('customer_documents')
-            ->whereNotNull('deleted_at')
-            ->get();
-
+        // Date filter (common for all roles)
         $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->toDateString());
         $endDate   = $request->get('end_date', Carbon::now()->endOfMonth()->toDateString());
 
@@ -70,6 +104,9 @@ class DashboardController extends Controller
 
         $uploads = DB::table('customer_documents') 
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as total'))
+            ->when($roleSlug === 'customer', function ($query) use ($user) {
+                $query->where('customer_id', $user->customer->id);
+            })
             ->whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])
             ->groupBy('date')
             ->pluck('total', 'date')
@@ -101,4 +138,5 @@ class DashboardController extends Controller
             'deletedCount',
         ));
     }
+
 }

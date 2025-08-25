@@ -169,22 +169,24 @@
             </div>
         </div>
     </div>
-
-    <div class="col-xl-6 col-xxl-6">
-        <div class="card">
-            <h5 style="padding-top:20px; text-align:center;">📈 Daily Customer Document Uploads</h5>
-            <div class="card-header d-flex justify-content-between">
-                <form method="GET" action="{{ route('admin.dashboard') }}" class="d-flex">
-                    <input type="date" name="start_date" value="{{ $startDate }}" class="form-control me-2">
-                    <input type="date" name="end_date" value="{{ $endDate }}" class="form-control me-2">
-                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
-                </form>
-            </div>
-            <div class="card-body">
-                <canvas class="" id="documentsLineChart" height="120"></canvas>
+    
+    @if(auth()->user()->role->slug !== 'customer')
+        <div class="col-xl-6 col-xxl-6">
+            <div class="card">
+                <h5 style="padding-top:20px; text-align:center;">📈 Daily Customer Document Uploads</h5>
+                <div class="card-header d-flex justify-content-between">
+                    <form method="GET" action="{{ route('admin.dashboard') }}" class="d-flex">
+                        <input type="date" name="start_date" value="{{ $startDate }}" class="form-control me-2">
+                        <input type="date" name="end_date" value="{{ $endDate }}" class="form-control me-2">
+                        <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <canvas class="" id="documentsLineChart" height="120"></canvas>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     
     <div class="col-xl-6 col-xxl-6">
