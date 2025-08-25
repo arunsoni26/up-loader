@@ -92,7 +92,8 @@
                                             @php
                                                 $profilePic = url('public/img/avatars/avatar.jpg');
                                                 if (!empty($userInfo->image)) {
-                                                    $profilePic = Storage::disk('s3')->url($userInfo->image);
+                                                    //$profilePic = Storage::disk('s3')->url($userInfo->image);
+                                                    $profilePic = Storage::disk('s3')->temporaryUrl($userInfo->image, now()->addMinutes(120));
                                                 }
                                             @endphp
                                             <img id="profilePreview" src="{{ $profilePic }}" alt="Profile Image" class="rounded-circle img-responsive mt-2"
@@ -378,8 +379,8 @@
                                     <div class="col-md-3 mb-3 zoom-item">
                                         <div class="card">
                                             <!-- <img src="{{ asset($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;"> -->
-                                            <img src="{{ Storage::disk('s3')->url($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;">
-                                            <!-- <img src="{{ Storage::disk('s3')->temporaryUrl($item->image, now()->addMinutes(60)) }}"> -->
+                                            <!-- <img src="{{ Storage::disk('s3')->url($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;"> -->
+                                            <img src="{{ Storage::disk('s3')->temporaryUrl($item->image, now()->addMinutes(120)) }}">
                                             <div class="card-body">
                                                 <!-- <p class="card-text">{{ Str::limit($item->description, 50) }}</p> -->
                                                 <form action="{{ route('admin.banner.delete', $item->id) }}" method="POST">
@@ -403,8 +404,8 @@
                                     <div class="col-md-3 mb-3 zoom-item">
                                         <div class="card border-warning">
                                             <!-- <img src="{{ asset($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;"> -->
-                                            <img src="{{ Storage::disk('s3')->url($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;">
-                                            <!-- <img src="{{ Storage::disk('s3')->temporaryUrl($item->image, now()->addMinutes(60)) }}"> -->
+                                            <!-- <img src="{{ Storage::disk('s3')->url($item->image) }}" class="card-img-top" style="height:150px; object-fit:cover;"> -->
+                                            <img src="{{ Storage::disk('s3')->temporaryUrl($item->image, now()->addMinutes(120)) }}">
                                             <div class="card-body">
                                                 <!-- <p class="card-text">{{ Str::limit($item->description, 50) }}</p> -->
                                                 <form action="{{ route('admin.banner.restore', $item->id) }}" method="POST">
