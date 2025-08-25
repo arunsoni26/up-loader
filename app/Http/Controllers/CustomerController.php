@@ -134,7 +134,7 @@ class CustomerController extends Controller
         try {
             // Save to users table
             $customerDetails = Customer::find($customerId);
-            if ($customerDetails->user_id) {
+            if ($customerDetails && isset($customerDetails->user_id)) {
                 $user = User::find($customerDetails->user_id);
             } else {
                 $user = new User();
