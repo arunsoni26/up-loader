@@ -18,6 +18,7 @@ class CustomerDocument extends Model
         'balance_sheet'=> 'Balance Sheet',
         'audit'        => 'Audit Files',
         'pl'           => 'PL A/c',
+        'other'        => 'Others',
     ];
 
     public function customer(){

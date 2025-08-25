@@ -29,6 +29,10 @@ class CustomerDocumentController extends Controller
         $q = CustomerDocument::with(['gstYear','uploader'])
             ->where('customer_id',$customer->id);
 
+        if (auth()->user()->role->slug == 'customer') {
+            $q->whereNot('doc_type', 'others');
+        }
+        
         if ($request->filled('gst_year_id')) $q->where('gst_year_id',$request->gst_year_id);
         if ($request->filled('doc_type'))    $q->where('doc_type',$request->doc_type);
 
