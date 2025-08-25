@@ -170,7 +170,7 @@
         </div>
     </div>
 
-    <div class="col-xl-6 col-xxl-6 d-flex">
+    <div class="col-xl-6 col-xxl-6">
         <div class="card">
             <h5 style="padding-top:20px; text-align:center;">📈 Daily Customer Document Uploads</h5>
             <div class="card-header d-flex justify-content-between">
@@ -181,17 +181,17 @@
                 </form>
             </div>
             <div class="card-body">
-                <canvas class="zoom-item" id="documentsLineChart" height="120"></canvas>
+                <canvas class="" id="documentsLineChart" height="120"></canvas>
             </div>
         </div>
     </div>
 
     
-    <div class="col-xl-6 col-xxl-6 d-flex">
+    <div class="col-xl-6 col-xxl-6">
         <div class="card">
             <h5 style="padding-top:20px; text-align:center;">🍩 Upload Distribution</h5>
             <div class="card-body" style="height:400px;">
-                <canvas class="zoom-item" id="documentsDonutChart" width="400"></canvas>
+                <canvas class="" id="documentsDonutChart" width="400"></canvas>
             </div>
         </div>
     </div>
