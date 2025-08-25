@@ -211,59 +211,62 @@
         const totals = @json($documentsPerDay -> pluck('total'));
 
         const donutData = totals.map(val => val === 0 ? 0.01 : val);
-        // LINE CHART
-        const ctxLine = document.getElementById('documentsLineChart').getContext('2d');
+        
+        @if(in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+            // LINE CHART
+            const ctxLine = document.getElementById('documentsLineChart').getContext('2d');
 
-        new Chart(ctxLine, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: '', // hide label for cleaner look
-                    data: totals,
-                    borderColor: '#3b8cff',   // blue line
-                    backgroundColor: 'rgba(59, 140, 255, 0.1)', // light blue fill
-                    borderWidth: 2,
-                    tension: 0.4, // smooth curve
-                    pointRadius: 0, // hide dots
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false // no legend
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: '', // hide label for cleaner look
+                        data: totals,
+                        borderColor: '#3b8cff',   // blue line
+                        backgroundColor: 'rgba(59, 140, 255, 0.1)', // light blue fill
+                        borderWidth: 2,
+                        tension: 0.4, // smooth curve
+                        pointRadius: 0, // hide dots
+                        fill: true
+                    }]
                 },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false // no vertical grid lines
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // no legend
                         },
-                        ticks: {
-                            maxTicksLimit: 6, // fewer labels for cleaner look
-                            autoSkip: true
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
                         }
                     },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: "rgba(0,0,0,0.05)", // very subtle horizontal grid
-                            drawBorder: false
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false // no vertical grid lines
+                            },
+                            ticks: {
+                                maxTicksLimit: 6, // fewer labels for cleaner look
+                                autoSkip: true
+                            }
                         },
-                        ticks: {
-                            stepSize: 5 // adjust depending on values
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: "rgba(0,0,0,0.05)", // very subtle horizontal grid
+                                drawBorder: false
+                            },
+                            ticks: {
+                                stepSize: 5 // adjust depending on values
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        @endif
 
         // Generate dynamic colors for donut chart
         const colors = totals.map(() =>
