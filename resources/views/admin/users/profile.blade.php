@@ -89,7 +89,13 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="text-center">
-                                            <img id="profilePreview" src="{{ Storage::disk('s3')->url($userInfo->image) }}" alt="Profile Image" class="rounded-circle img-responsive mt-2"
+                                            @php
+                                                $profilePic = url('public/img/avatars/avatar.jpg');
+                                                if (!empty($userInfo->image)) {
+                                                    $profilePic = Storage::disk('s3')->url($userInfo->image);
+                                                }
+                                            @endphp
+                                            <img id="profilePreview" src="{{ $profilePic }}" alt="Profile Image" class="rounded-circle img-responsive mt-2"
                                                 width="128" height="128">
                                             <!-- <img id="profilePreview" src="{{ asset($userInfo->image) }}" alt="Profile Picture" class="rounded-circle img-responsive mt-2" -->
                                             <div class="mt-2">
