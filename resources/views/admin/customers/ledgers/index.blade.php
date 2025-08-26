@@ -187,7 +187,7 @@ $(function(){
             if(confirm('Delete this entry?')){
                 $.ajax({
                     url: '{{ url("admin/customers/".$customer->id."/ledger/delete") }}/' + $(this).data('id'),
-                    type: 'DELETE',
+                    type: 'POST',
                     data: { _token: '{{ csrf_token() }}' },
                     success: function(){
                         table.ajax.reload();
