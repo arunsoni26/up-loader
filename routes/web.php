@@ -32,12 +32,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::middleware(['role.superadmin'])->group(function () {
             Route::post('/news/add', [ProfileController::class, 'addNews'])->name('news.add');
             Route::put('/news/{id}', [ProfileController::class, 'update'])->name('news.update');
-            Route::delete('/news/{id}', [ProfileController::class, 'destroy'])->name('news.destroy');
+            Route::any('/news/{id}', [ProfileController::class, 'destroy'])->name('news.destroy');
             Route::patch('/news/{id}/restore', [ProfileController::class, 'restore'])->name('news.restore');
     
             //gallery
             Route::post('/banner/add', [ProfileController::class, 'addBanner'])->name('banner.add');
-            Route::delete('/banner/delete/{id}', [ProfileController::class, 'deleteBanner'])->name('banner.delete');
+            Route::any('/banner/delete/{id}', [ProfileController::class, 'deleteBanner'])->name('banner.delete');
             Route::patch('/banner/restore/{id}', [ProfileController::class, 'restoreBanner'])->name('banner.restore');
             
             // roles & permissions
@@ -53,7 +53,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 Route::post('/form', [App\Http\Controllers\UserController::class,'form'])->name('form');
                 Route::post('/save', [App\Http\Controllers\UserController::class,'save'])->name('save');
                 Route::post('/toggle-status/{id}', [App\Http\Controllers\UserController::class,'toggleStatus'])->name('toggle-status');
-                Route::delete('/delete/{id}', [App\Http\Controllers\UserController::class,'destroy'])->name('delete');
+                Route::any('/duri: elete/{id}', [App\Http\Controllers\UserController::class,'destroy'])->name('delete');
             });
         });
         
@@ -62,7 +62,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::get('/', [CustomerLedgerController::class, 'index'])->name('index'); // page
             Route::get('/list', [CustomerLedgerController::class, 'list'])->name('list'); // ajax
             Route::post('/save', [CustomerLedgerController::class, 'save'])->name('save'); // add/edit
-            Route::delete('/delete/{ledger}', [CustomerLedgerController::class, 'destroy'])->name('delete');
+            Route::any('/delete/{ledger}', [CustomerLedgerController::class, 'destroy'])->name('delete');
         });
 
         Route::middleware(['permission:customers,can_view'])->group(function () {
@@ -105,7 +105,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     
             // download / delete a single doc
             Route::get('/download/{id}', [CustomerDocumentController::class,'download'])->name('download');
-            Route::delete('/delete/{id}', [CustomerDocumentController::class,'destroy'])->name('delete');
+            Route::any('/delete/{id}', [CustomerDocumentController::class,'destroy'])->name('delete');
             
             // show/hide doc type
             Route::post('/doc-types/toggle-show', [CustomerDocumentController::class, 'toggleShow'])->name('doc_types.toggle_show');
@@ -115,7 +115,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::group(['prefix' => 'gst-years', 'as' => 'gst_years.'], function () {
             Route::get('/list', [GstYearController::class,'list'])->name('list');      // JSON for dropdown / table
             Route::post('/save', [GstYearController::class,'save'])->name('save');     // add/edit
-            Route::delete('/{id}', [GstYearController::class,'destroy'])->name('delete');
+            Route::any('/{id}', [GstYearController::class,'destroy'])->name('delete');
         });
     });
     
