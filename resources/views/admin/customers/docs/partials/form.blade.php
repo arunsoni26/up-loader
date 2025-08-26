@@ -3,74 +3,6 @@
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 
-<!-- <form id="docsForm" enctype="multipart/form-data">
-    @csrf
-    <div class="modal-body">
-        <input type="hidden" name="customer_id" value="{{ $customer->id }}">
-
-        <div class="row g-3 mb-3">
-            <div class="col-md-4">
-                <label class="form-label">GST Year</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                    <select class="form-select" name="gst_year_id" id="docs_gst_year" required>
-                        <option value="">Select GST Year</option>
-                        @foreach($years as $y)
-                            <option value="{{ $y->id }}">{{ $y->label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <small class="text-primary d-inline-block mt-1" id="quickAddYear" style="cursor:pointer;">
-                    <i class="fa fa-plus"></i> Add new GST year
-                </small>
-            </div>
-        </div>
-
-        @php
-            $sections = $types; // key => label
-        @endphp
-
-        @foreach($sections as $typeKey => $typeLabel)
-            <div class="card mb-3 border-0 shadow-sm">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong><i class="fa fa-folder me-2"></i>{{ $typeLabel }}</strong>
-                    <button type="button" class="btn btn-sm btn-outline-primary addRow" data-type="{{ $typeKey }}">
-                        <i class="fa fa-plus"></i> Add {{ $typeLabel }}
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="docRows" id="rows_{{ $typeKey }}">
-                        {{-- first row --}}
-                        <div class="row g-2 align-items-end docRow">
-                            <div class="col-md-8">
-                                <label class="form-label mb-1">Description</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-text-width"></i></span>
-                                    <input type="text" class="form-control" name="docs[{{ $typeKey }}][0][description]" placeholder="Short description (optional)">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label mb-1">File</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-file"></i></span>
-                                    <input type="file" class="form-control" name="docs[{{ $typeKey }}][0][file]">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
-        <small class="text-muted">Max file size 10MB each.</small>
-    </div>
-
-    <div class="modal-footer bg-light">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-        <button type="submit" id="docsSubmit" class="btn btn-success"><i class="fa fa-save"></i> Upload</button>
-    </div>
-</form> -->
-
 <form id="docsForm" enctype="multipart/form-data">
     @csrf
     <div class="modal-body">
@@ -95,39 +27,35 @@
             </div>
         </div>
 
-        @php
-            $sections = $types; // key => label
-        @endphp
-
         <!-- Document Sections -->
         <div class="row">
-            @foreach($sections as $typeKey => $typeLabel)
+            @foreach($docTypes as $docType)
                 <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm h-100 zoom-item">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <strong class="text-dark">
-                                <i class="fa fa-folder-open me-2 text-primary"></i>{{ $typeLabel }}
+                                <i class="fa fa-folder-open me-2 text-primary"></i>{{ $docType->name }}
                             </strong>
-                            <button type="button" class="btn btn-sm btn-outline-primary addRow" data-type="{{ $typeKey }}">
+                            <button type="button" class="btn btn-sm btn-outline-primary addRow" data-type="{{ $docType->id }}">
                                 <i class="fa fa-plus"></i> Add
                             </button>
                         </div>
                         <div class="card-body">
-                            <div class="docRows" id="rows_{{ $typeKey }}">
+                            <div class="docRows" id="rows_{{ $docType->id }}">
                                 <!-- First Row -->
                                 <div class="row g-2 align-items-end docRow">
                                     <div class="col-md-7">
                                         <label class="form-label mb-1">Description</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa fa-text-width"></i></span>
-                                            <input type="text" class="form-control shadow-sm" name="docs[{{ $typeKey }}][0][description]" placeholder="Short description">
+                                            <input type="text" class="form-control shadow-sm" name="docs[{{ $docType->id }}][0][description]" placeholder="Short description">
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <label class="form-label mb-1">File</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa fa-file"></i></span>
-                                            <input type="file" class="form-control shadow-sm" name="docs[{{ $typeKey }}][0][file]">
+                                            <input type="file" class="form-control shadow-sm" name="docs[{{ $docType->id }}][0][file]">
                                         </div>
                                     </div>
                                 </div>

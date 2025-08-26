@@ -30,4 +30,8 @@ class CustomerDocument extends Model
     public function uploader(){
         return $this->belongsTo(User::class, 'uploaded_by');
     }
+
+    public function docType(){
+        return $this->belongsTo(DocType::class, 'doc_type');
+    }
 }

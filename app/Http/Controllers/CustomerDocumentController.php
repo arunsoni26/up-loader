@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerDocument;
+use App\Models\DocType;
 use App\Models\GSTYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,54 +19,80 @@ class CustomerDocumentController extends Controller
           	abort(403, 'Unauthorized access.');
         }
         $years = GSTYear::orderBy('label','desc')->get();
-        return view('admin.customers.docs.index', compact('customer','years'));
+        $docTypeQuery = DocType::where('status', 1);
+        
+        if (auth()->user()->role->slug == 'customer') {
+            $docTypeQuery->where('is_show', operator: 1);
+        }
+        $docTypes = $docTypeQuery->get();
+
+        return view('admin.customers.docs.index', compact('customer','years','docTypes'));
     }
 
     public function list(Request $request, Customer $customer)
     {
-      	if (auth()->user()->role->slug == 'customer' && auth()->user()->id !== $customer->user_id) {
-          	abort(403, 'Unauthorized access.');
+        // Access control
+        if (auth()->user()->role->slug === 'customer' && auth()->user()->id !== $customer->user_id) {
+            abort(403, 'Unauthorized access.');
         }
-        $q = CustomerDocument::with(['gstYear','uploader'])
-            ->where('customer_id',$customer->id);
 
-        if (auth()->user()->role->slug == 'customer') {
-            $q->whereNot('doc_type', 'others');
+        // Build query
+        $query = CustomerDocument::with(['gstYear', 'uploader', 'docType'])
+            ->where('customer_id', $customer->id);
+
+        // Filter based on role
+        if (auth()->user()->role->slug === 'customer') {
+            $query->whereHas('docType', fn($q) => $q->where('is_show', 1));
         }
-        
-        if ($request->filled('gst_year_id')) $q->where('gst_year_id',$request->gst_year_id);
-        if ($request->filled('doc_type'))    $q->where('doc_type',$request->doc_type);
 
-        $docs = $q->orderByDesc('created_at')->get();
+        // Apply filters
+        if ($request->filled('gst_year_id')) {
+            $query->where('gst_year_id', $request->gst_year_id);
+        }
+        if ($request->filled('doc_type')) {
+            $query->where('doc_type', $request->doc_type);
+        }
 
-        // Return in a format your DataTable expects (or simple array)
-        return response()->json([
-            'data' => $docs->map(function($d){
-              	$docRecords = [
-                    'year'    => $d->gstYear?->label,
-                    'type'    => strtoupper($d->doc_type),
-                    'desc'    => e($d->description),
-                    'file'    => '<a href="'.route('admin.customers.docs.download', [$d->customer_id, $d->id]).'" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i> Download</a>',
-                    'by'      => $d->uploader?->name ?? '—',
-                    'date'    => $d->created_at->format('d M Y'),
-                    'actions' => '',
-                ];
-              	if	(auth()->user()->hasPermission('customer_docs', 'can_add', auth()->id())) {
-                	$docRecords['actions'] = '<button class="btn btn-sm btn-danger deleteDoc" data-id="'.$d->id.'"><i class="fa fa-trash"></i></button>';
-                }
-                return $docRecords;
-            })
-        ]);
+        // Get documents
+        $documents = $query->orderByDesc('created_at')->get();
+
+        // Format data
+        $data = $documents->map(function ($doc) {
+            // dd($doc->doc_type, $doc->docType);
+            return [
+                'year' => $doc->gstYear?->label ?? '-',
+                'type' => $doc->docType->name ?? '-',
+                'desc' => e($doc->description) ?? '-',
+                'file' => '<a href="'.route('admin.customers.docs.download', [$doc->customer_id, $doc->id]).'" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"></i> Download</a>',
+                'by' => $doc->uploader?->name ?? '—',
+                'date' => $doc->created_at->format('d M Y'),
+
+                'actions' => auth()->user()->hasPermission('customer_docs', 'can_add', auth()->id())
+                    ? '<button class="btn btn-sm btn-danger deleteDoc" data-id="'.$doc->id.'"><i class="fa fa-trash"></i></button>'
+                    : ''
+            ];
+        });
+
+        // Return in DataTable format
+        return response()->json(['data' => $data]);
     }
+
 
     // Modal form
     public function form(Request $request, Customer $customer)
     {
         $years = GSTYear::orderBy('label','desc')->get();
+        
+        $docTypesQuery = DocType::where('status', 1);
+        if (auth()->user()->role->slug == 'customer') {
+            $docTypesQuery->where('is_show', 1);
+        }
+        $docTypes = $docTypesQuery->get();
+
         return view('admin.customers.docs.partials.form', [
             'customer' => $customer,
             'years'    => $years,
-            'types'    => CustomerDocument::TYPES
+            'docTypes'    => $docTypes
         ]);
     }
 
@@ -74,36 +101,34 @@ class CustomerDocumentController extends Controller
     {
         $request->validate([
             'gst_year_id' => 'required|exists:gst_years,id',
-            // Each doc type arrays are optional; we validate files if present
-            'docs.*.*.file' => 'nullable|file|max:10240', // 10MB per file
+            'docs.*.*.file' => 'nullable|file|max:10240', 
             'docs.*.*.description' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
         try {
             $uploaded = 0;
-
-            // docs is shaped like: docs[itr][0][file], docs[itr][0][description], docs[computation][0][file], ...
             $docs = $request->input('docs', []);
 
-            foreach (array_keys(CustomerDocument::TYPES) as $type) {
-                if (!isset($docs[$type])) continue;
-
-                $rows = $docs[$type]; // array of items for this type
+            foreach ($docs as $docTypeId => $rows) {
                 foreach ($rows as $index => $row) {
-                    // Handle file input names: docs[type][index][file]
-                    $fileInputName = "docs.$type.$index.file";
+                    $fileInputName = "docs.$docTypeId.$index.file";
                     $desc          = $row['description'] ?? null;
 
                     if ($request->hasFile($fileInputName)) {
                         $file     = $request->file($fileInputName);
                         $filename = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
-                        $path     = $file->storeAs("customers/{$customer->id}/{$request->gst_year_id}/$type", $filename, 's3');
+
+                        $path = $file->storeAs(
+                            "customers/{$customer->id}/{$request->gst_year_id}/{$docTypeId}", 
+                            $filename, 
+                            's3'
+                        );
 
                         CustomerDocument::create([
                             'customer_id' => $customer->id,
                             'gst_year_id' => $request->gst_year_id,
-                            'doc_type'    => $type,
+                            'doc_type' => $docTypeId,
                             'description' => $desc,
                             'file_path'   => $path,
                             'uploaded_by' => auth()->id(),

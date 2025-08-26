@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\GstYear;
+use App\Models\GSTYear;
 
 class GstYearController extends Controller
 {
     public function list() {
-        return response()->json(GstYear::orderBy('label','desc')->get());
+        return response()->json(GSTYear::orderBy('label','desc')->get());
     }
 
     public function save(Request $request) {
@@ -16,7 +16,7 @@ class GstYearController extends Controller
             'id' => 'nullable|exists:gst_years,id',
             'label' => 'required|string|max:20|unique:gst_years,label,' . $request->id,
         ]);
-        $year = GstYear::updateOrCreate(
+        $year = GSTYear::updateOrCreate(
             ['id' => $request->id],
             ['label' => $request->label]
         );
@@ -24,7 +24,7 @@ class GstYearController extends Controller
     }
 
     public function destroy($id) {
-        GstYear::findOrFail($id)->delete();
+        GSTYear::findOrFail($id)->delete();
         return response()->json(['success'=>true,'message'=>'GST Year deleted']);
     }
 }

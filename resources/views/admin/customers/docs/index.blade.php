@@ -17,8 +17,8 @@
                 </select>
                 <select id="filterType" class="form-select form-select-sm">
                     <option value="">All Types</option>
-                    @foreach(\App\Models\CustomerDocument::TYPES as $k=>$v)
-                        <option value="{{ $k }}">{{ $v }}</option>
+                    @foreach($docTypes as $docType)
+                        <option value="{{ $docType->id }}">{{ $docType->name }}</option>
                     @endforeach
                 </select>
               	@if(auth()->user()->hasPermission('customer_docs', 'can_add', auth()->id())) 
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div class="card-body p-0">
+        <div class="card-body">
             <div class="table-responsive">
                 <table id="docsTable" class="table table-striped table-hover mb-0 align-middle">
                     <thead class="table-light">
@@ -61,33 +61,76 @@
 <script>
 (function(){
     const customerId = {{ $customer->id }};
-    const tableBody = $('#docsTable tbody');
+    const tableSelector = '#docsTable';
+    let docsTable;
+    let retryCount = 1;
 
-    function loadTable(){
-        $.get("{{ route('admin.customers.docs.list', $customer->id) }}", {
-            gst_year_id: $('#filterYear').val(),
-            doc_type: $('#filterType').val()
-        }, function(res){
-            let rows = '';
-            (res.data || []).forEach(r => {
-                rows += `<tr class="zoom-item">
-                    <td>${r.year ?? '-'}</td>
-                    <td>${r.type ?? '-'}</td>
-                    <td>${r.desc ?? '-'}</td>
-                    <td>${r.file ?? ''}</td>
-                    <td>${r.by ?? '-'}</td>
-                    <td>${r.date ?? '-'}</td>
-                    <td>${r.actions ?? ''}</td>
-                </tr>`;
-            });
-            tableBody.html(rows);
+    function initDocsTable(retries = retryCount) {
+        if ($.fn.DataTable.isDataTable(tableSelector)) {
+            $(tableSelector).DataTable().destroy();
+        }
+
+        docsTable = $(tableSelector).DataTable({
+            processing: true,
+            serverSide: false,
+            ajax: {
+                url: "{{ route('admin.customers.docs.list', $customer->id) }}",
+                data: function(d) {
+                    d.gst_year_id = $('#filterYear').val();
+                    d.doc_type = $('#filterType').val();
+                },
+                dataSrc: function(res) {
+                    return res.data || [];
+                },
+                error: function(xhr, error, thrown) {
+                    console.error("Document table AJAX error:", xhr.responseText);
+                    let isServerError = false;
+
+                    try {
+                        const json = JSON.parse(xhr.responseText);
+                        if (json.message && json.message === "Server Error") {
+                            isServerError = true;
+                        }
+                    } catch (e) {
+                        isServerError = xhr.status === 500;
+                    }
+
+                    if (retries > 0 && isServerError) {
+                        console.warn(`Retrying document table load... (${retryCount - retries + 1})`);
+                        setTimeout(() => {
+                            initDocsTable(retries - 1);
+                        }, 1000);
+                    } else {
+                        alert("Failed to load document data. Please reload the page.");
+                    }
+                }
+            },
+            columns: [
+                { data: 'year', defaultContent: '-' },
+                { data: 'type', defaultContent: '-' },
+                { data: 'desc', defaultContent: '-' },
+                { data: 'file', defaultContent: '' },
+                { data: 'by', defaultContent: '-' },
+                { data: 'date', defaultContent: '-' },
+                { data: 'actions', defaultContent: '', orderable: false, searchable: false }
+            ],
+            createdRow: function(row) {
+                $(row).addClass('zoom-item');
+            }
         });
     }
 
-    // initial
-    loadTable();
+    // Initial table load
+    initDocsTable();
 
-    $('#filterYear, #filterType').on('change', loadTable);
+    // Reload on filters
+    $('#filterYear, #filterType').on('change', function(){
+        if (docsTable) {
+            docsTable.ajax.reload();
+        }
+    });
+
+    // Keep your existing event handlers intact below...
 
     $('#btnUploadDocs').on('click', function(){
         $.post("{{ route('admin.customers.docs.form', $customer->id) }}",
@@ -107,10 +150,8 @@
             label: lbl
         }, function(res){
             if(res.success){
-                // refresh filterYear and form dropdowns (if open)
                 $('#filterYear').prepend(`<option value="${res.data.id}">${res.data.label}</option>`);
                 $('#filterYear').val(res.data.id).trigger('change');
-                // also notify form (if present)
                 if($('#docs_gst_year').length){
                     $('#docs_gst_year').prepend(`<option value="${res.data.id}">${res.data.label}</option>`)
                                         .val(res.data.id);
@@ -119,7 +160,6 @@
         });
     });
 
-    // Delete single doc
     $(document).on('click', '.deleteDoc', function(){
         if(!confirm('Delete this document?')) return;
         const id = $(this).data('id');
@@ -128,10 +168,11 @@
             type: 'DELETE',
             data: {_token: "{{ csrf_token() }}"},
             success: function(res){
-                if(res.success) loadTable();
+                if(res.success && docsTable) docsTable.ajax.reload();
             }
         });
     });
+
 })();
 </script>
 @endpush
