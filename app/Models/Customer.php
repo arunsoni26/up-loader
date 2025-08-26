@@ -16,7 +16,7 @@ class Customer extends Model
     protected $fillable = [
         'name','user_id','gst_name','father_name','pan','pan_doc','client_type_status',
         'code','mobile_no','email','city','group_id','dob','gst','gst_doc','aadhar','aadhar_doc',
-        'address','status','hide_dashboard'
+        'address','status','hide_dashboard', 'password'
     ];
 
     public function user()

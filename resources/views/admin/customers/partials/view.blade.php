@@ -14,7 +14,7 @@
                 <div>
                     <h4 class="mb-0">{{ $customer->name }}</h4>
                     <small><i class="fa fa-envelope"></i> {{ $customer->email ?? 'N/A' }}</small><br>
-                    <small><i class="fa fa-phone"></i> {{ $customer->mobile ?? 'N/A' }}</small>
+                    <small><i class="fa fa-phone"></i> {{ $customer->mobile_no ?? 'N/A' }}</small>
                 </div>
             </div>
 
@@ -29,6 +29,15 @@
                     <div class="col-md-6 mb-3"><strong>Client Type Status:</strong> {{ ucfirst($customer->client_type_status ?? 'N/A') }}</div>
                     <div class="col-md-6 mb-3"><strong>Date of Birth:</strong> {{ $customer->dob ? $customer->dob->format('d-m-Y') : 'N/A' }}</div>
                     <div class="col-md-6 mb-3"><strong>City:</strong> {{ $customer->city ?? 'N/A' }}</div>
+                    <div class="col-md-6 mb-3">
+    <strong>Password:</strong>
+    <span id="passwordText">********</span>
+    <button type="button" class="btn btn-sm btn-link p-0 ms-2" id="togglePassword">
+        <i class="fas fa-eye"></i>
+    </button>
+</div>
+
+
                 </div>
 
                 {{-- Section: Documents --}}
@@ -75,6 +84,28 @@
             </div>
         </div>
     </div>
-
-
 </div>
+
+<script>
+document.addEventListener("click", function (e) {
+    if (e.target.closest("#togglePassword")) {
+        const togglePassword = e.target.closest("#togglePassword");
+        const passwordText = document.getElementById("passwordText");
+        const icon = togglePassword.querySelector("i");
+        const actualPassword = @json($customer->password ?? 'N/A');
+
+        if (passwordText.dataset.visible === "true") {
+            passwordText.textContent = "********";
+            passwordText.dataset.visible = "false";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        } else {
+            passwordText.textContent = actualPassword;
+            passwordText.dataset.visible = "true";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        }
+    }
+});
+</script>
+
