@@ -15,10 +15,10 @@
             <li class="nav-item dropdown">
                 <a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
                     @php
-                        $profilePic = url('public/img/avatars/avatar.jpg');
-                        if (!empty($userInfo->image)) {
-                            //$profilePic = Storage::disk('s3')->url($userInfo->image);
-                            $profilePic = Storage::disk('s3')->temporaryUrl($userInfo->image, now()->addMinutes(120));
+                        $profilePic = url('img/avatars/avatar.jpg');
+                        if (!empty(auth()->user()->image)) {
+                            //$profilePic = Storage::disk('s3')->url(auth()->user()->image);
+                            $profilePic = Storage::disk('s3')->temporaryUrl(auth()->user()->image, now()->addMinutes(120));
                         }
                     @endphp
                     <img src="{{ $profilePic }}" class="avatar img-fluid rounded" alt="Charles Hall" />

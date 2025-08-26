@@ -106,6 +106,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             // download / delete a single doc
             Route::get('/download/{id}', [CustomerDocumentController::class,'download'])->name('download');
             Route::delete('/delete/{id}', [CustomerDocumentController::class,'destroy'])->name('delete');
+            
+            // show/hide doc type
+            Route::post('/doc-types/toggle-show', [CustomerDocumentController::class, 'toggleShow'])->name('doc_types.toggle_show');
         });
     
         // GST Years quick-manage

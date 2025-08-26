@@ -36,9 +36,18 @@
                             <strong class="text-dark">
                                 <i class="fa fa-folder-open me-2 text-primary"></i>{{ $docType->name }}
                             </strong>
-                            <button type="button" class="btn btn-sm btn-outline-primary addRow" data-type="{{ $docType->id }}">
-                                <i class="fa fa-plus"></i> Add
-                            </button>
+                            <div class="d-flex align-items-center">
+                                <div class="form-check form-switch me-3">
+                                    <input class="form-check-input toggle-doc-show" 
+                                        type="checkbox" 
+                                        role="switch" 
+                                        data-id="{{ $docType->id }}"
+                                        {{ $docType->is_show ? 'checked' : '' }}>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary addRow" data-type="{{ $docType->id }}">
+                                    <i class="fa fa-plus"></i> Add
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="docRows" id="rows_{{ $docType->id }}">
@@ -172,4 +181,40 @@
         });
     });
 })();
+
+
+// Toggle is_show for document type
+if (!window.docToggleBound) {
+    $(document).on('change', '.toggle-doc-show', function () {
+        const $input = $(this);
+        const docTypeId = $input.data('id');
+        const isShow = $input.is(':checked') ? 1 : 0;
+
+        $.ajax({
+            url: "{{ route('admin.customers.docs.doc_types.toggle_show', $customer->id) }}",
+            type: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: docTypeId,
+                is_show: isShow
+            },
+            success: function (res) {
+                if (res.success) {
+                    if (typeof toastr !== 'undefined') toastr.success(res.message);
+                } else {
+                    if (typeof toastr !== 'undefined') toastr.error(res.message || 'Toggle failed');
+                }
+            },
+            error: function (xhr) {
+                let msg = 'Something went wrong';
+                if (xhr.responseJSON?.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                if (typeof toastr !== 'undefined') toastr.error(msg);
+            }
+        });
+    });
+
+    window.docToggleBound = true; // prevent rebinding
+}
 </script>

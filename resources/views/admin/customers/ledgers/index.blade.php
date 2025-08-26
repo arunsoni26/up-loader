@@ -8,9 +8,11 @@
                 Ledger for {{ $customer->name }}
             </h4>
             
-            <button class="btn btn-primary" id="addLedgerBtn">
-                <i class="fa fa-plus"></i> Add Ledger Entry
-            </button>
+            @if(canDo('ledgers','can_add'))
+                <button class="btn btn-primary" id="addLedgerBtn">
+                    <i class="fa fa-plus"></i> Add Ledger Entry
+                </button>
+            @endif
         </div>
         
 
@@ -43,51 +45,53 @@
     </div>
 </div>
 
-{{-- Modal --}}
-<div class="modal fade" id="ledgerModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="ledgerForm">
-                @csrf
-                <input type="hidden" name="id" id="ledgerId">
+    @if(canDo('ledgers','can_add'))
+        {{-- Modal --}}
+        <div class="modal fade" id="ledgerModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="ledgerForm">
+                        @csrf
+                        <input type="hidden" name="id" id="ledgerId">
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Ledger Entry</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ledger Entry</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label>Type</label>
+                                <select class="form-control" name="type" id="ledgerType" required>
+                                    <option value="debit">Debit</option>
+                                    <option value="credit">Credit</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Amount</label>
+                                <input type="number" class="form-control" name="amount" id="ledgerAmount" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Date</label>
+                                <input type="datetime-local" class="form-control" name="date" id="ledgerDate" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <textarea class="form-control" name="description" id="ledgerDescription"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label>Type</label>
-                        <select class="form-control" name="type" id="ledgerType" required>
-                            <option value="debit">Debit</option>
-                            <option value="credit">Credit</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Amount</label>
-                        <input type="number" class="form-control" name="amount" id="ledgerAmount" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Date</label>
-                        <input type="datetime-local" class="form-control" name="date" id="ledgerDate" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Description</label>
-                        <textarea class="form-control" name="description" id="ledgerDescription"></textarea>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
+    @endif
 @endsection
 
 @push('scripts')
@@ -146,66 +150,68 @@ $(function(){
     }
 
     initLedgerTable();
-
-    // Outstanding
-    function updateOutstanding(){
-        $.get('{{ route("admin.customers.ledger.list", $customer->id) }}', function(res){
-            let debit = res.data.filter(r=>r.type==='debit').reduce((a,b)=>a+parseFloat(b.amount),0);
-            let credit = res.data.filter(r=>r.type==='credit').reduce((a,b)=>a+parseFloat(b.amount),0);
-            let balance = credit - debit;
-            let color = balance > 0 ? 'text-success' : balance < 0 ? 'text-danger' : 'text-secondary';
-            $('#outstandingAmount').text(balance).attr('class', color);
-        });
-    }
-    updateOutstanding();
-
-    // Add
-    $('#addLedgerBtn').click(function(){
-        $('#ledgerForm')[0].reset();
-        $('#ledgerId').val('');
-        $('#ledgerModal').modal('show');
-    });
-
-    // Save
-    $('#ledgerForm').submit(function(e){
-        e.preventDefault();
-        $.post('{{ route("admin.customers.ledger.save", $customer->id) }}', $(this).serialize(), function(){
-            $('#ledgerModal').modal('hide');
-            table.ajax.reload();
-            updateOutstanding();
-        });
-    });
-
-    // Delete
-    $(document).on('click', '.deleteBtn', function(){
-        if(confirm('Delete this entry?')){
-            $.ajax({
-                url: '{{ url("admin/customers/".$customer->id."/ledger/delete") }}/'+$(this).data('id'),
-                type:'DELETE',
-                data:{ _token: '{{ csrf_token() }}' },
-                success: function(){
-                    table.ajax.reload();
-                    updateOutstanding();
-                }
+    
+    @if(canDo('ledgers','can_add'))
+        // Outstanding
+        function updateOutstanding(){
+            $.get('{{ route("admin.customers.ledger.list", $customer->id) }}', function(res){
+                let debit = res.data.filter(r=>r.type==='debit').reduce((a,b)=>a+parseFloat(b.amount),0);
+                let credit = res.data.filter(r=>r.type==='credit').reduce((a,b)=>a+parseFloat(b.amount),0);
+                let balance = credit - debit;
+                let color = balance > 0 ? 'text-success' : balance < 0 ? 'text-danger' : 'text-secondary';
+                $('#outstandingAmount').text(balance).attr('class', color);
             });
         }
-    });
-
-    // Edit
-    $(document).on('click', '.editBtn', function(){
-        let id = $(this).data('id');
-        $.get('{{ route("admin.customers.ledger.list", $customer->id) }}', function(res){
-            let record = res.data.find(r=>r.id==id);
-            if(record){
-                $('#ledgerId').val(record.id);
-                $('#ledgerType').val(record.type);
-                $('#ledgerAmount').val(record.amount);
-                $('#ledgerDate').val(record.date.replace(' ', 'T'));
-                $('#ledgerDescription').val(record.description);
-                $('#ledgerModal').modal('show');
+        updateOutstanding();
+        
+        // Add
+        $('#addLedgerBtn').click(function(){
+            $('#ledgerForm')[0].reset();
+            $('#ledgerId').val('');
+            $('#ledgerModal').modal('show');
+        });
+        
+        // Save
+        $('#ledgerForm').submit(function(e){
+            e.preventDefault();
+            $.post('{{ route("admin.customers.ledger.save", $customer->id) }}', $(this).serialize(), function(){
+                $('#ledgerModal').modal('hide');
+                table.ajax.reload();
+                updateOutstanding();
+            });
+        });
+    
+        // Delete
+        $(document).on('click', '.deleteBtn', function(){
+            if(confirm('Delete this entry?')){
+                $.ajax({
+                    url: '{{ url("admin/customers/".$customer->id."/ledger/delete") }}/'+$(this).data('id'),
+                    type:'DELETE',
+                    data:{ _token: '{{ csrf_token() }}' },
+                    success: function(){
+                        table.ajax.reload();
+                        updateOutstanding();
+                    }
+                });
             }
         });
-    });
+    
+        // Edit
+        $(document).on('click', '.editBtn', function(){
+            let id = $(this).data('id');
+            $.get('{{ route("admin.customers.ledger.list", $customer->id) }}', function(res){
+                let record = res.data.find(r=>r.id==id);
+                if(record){
+                    $('#ledgerId').val(record.id);
+                    $('#ledgerType').val(record.type);
+                    $('#ledgerAmount').val(record.amount);
+                    $('#ledgerDate').val(record.date.replace(' ', 'T'));
+                    $('#ledgerDescription').val(record.description);
+                    $('#ledgerModal').modal('show');
+                }
+            });
+        });
+    @endif
 });
 </script>
 @endpush

@@ -76,7 +76,11 @@ class UserController extends Controller
         $user->status = $request->status ?? 1;
         $user->save();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'msg' => 'User saved successfully',
+        ]);
     }
 
     public function toggleStatus($id) {

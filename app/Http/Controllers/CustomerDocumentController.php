@@ -162,4 +162,21 @@ class CustomerDocumentController extends Controller
         $doc->delete(); // soft delete
         return response()->json(['success'=>true,'message'=>'Document deleted']);
     }
+
+    public function toggleShow(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:doc_types,id',
+            'is_show' => 'required|boolean',
+        ]);
+
+        $docType = DocType::findOrFail($request->id);
+        $docType->is_show = $request->is_show;
+        $docType->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Visibility updated successfully.'
+        ]);
+    }
 }

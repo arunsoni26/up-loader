@@ -17,10 +17,10 @@
             <div class="d-flex justify-content-center">
                 <div class="flex-shrink-0">
                     @php
-                        $profilePic = url('public/img/avatars/avatar.jpg');
-                        if (!empty($userInfo->image)) {
-                            //$profilePic = Storage::disk('s3')->url($userInfo->image);
-                            $profilePic = Storage::disk('s3')->temporaryUrl($userInfo->image, now()->addMinutes(120));
+                        $profilePic = url('img/avatars/avatar.jpg');
+                        if (!empty(auth()->user()->image)) {
+                            //$profilePic = Storage::disk('s3')->url(auth()->user()->image);
+                            $profilePic = Storage::disk('s3')->temporaryUrl(auth()->user()->image, now()->addMinutes(120));
                         }
                     @endphp
                     <img src="{{ $profilePic }}" class="avatar img-fluid rounded me-1" alt="Charles Hall" />
