@@ -178,38 +178,41 @@ $(function(){
                 $('#ledgerModal').modal('hide');
                 table.ajax.reload();
                 updateOutstanding();
+                window.location.reload();
             });
         });
-    
-        // Delete
-        $(document).on('click', '.deleteBtn', function(){
+
+        // Delete Ledger
+        $(document).on('click', '.delete-ledger', function(){
             if(confirm('Delete this entry?')){
                 $.ajax({
-                    url: '{{ url("admin/customers/".$customer->id."/ledger/delete") }}/'+$(this).data('id'),
-                    type:'DELETE',
-                    data:{ _token: '{{ csrf_token() }}' },
+                    url: '{{ url("admin/customers/".$customer->id."/ledger/delete") }}/' + $(this).data('id'),
+                    type: 'DELETE',
+                    data: { _token: '{{ csrf_token() }}' },
                     success: function(){
                         table.ajax.reload();
                         updateOutstanding();
+                        window.location.reload();
                     }
                 });
             }
         });
-    
-        // Edit
-        $(document).on('click', '.editBtn', function(){
+
+        // Edit Ledger
+        $(document).on('click', '.edit-ledger', function(){
             let id = $(this).data('id');
-            $.get('{{ route("admin.customers.ledger.list", $customer->id) }}', function(res){
-                let record = res.data.find(r=>r.id==id);
-                if(record){
-                    $('#ledgerId').val(record.id);
-                    $('#ledgerType').val(record.type);
-                    $('#ledgerAmount').val(record.amount);
-                    $('#ledgerDate').val(record.date.replace(' ', 'T'));
-                    $('#ledgerDescription').val(record.description);
-                    $('#ledgerModal').modal('show');
-                }
-            });
+            let date = $(this).data('date');
+            let description = $(this).data('description');
+            let amount = $(this).data('amount');
+            let type = $(this).data('ledger-type');
+
+            $('#ledgerId').val(id);
+            $('#ledgerDate').val(date);
+            $('#ledgerDescription').val(description);
+            $('#ledgerAmount').val(amount);
+            $('#ledgerType').val(type);
+
+            $('#ledgerModal').modal('show');
         });
     @endif
 });

@@ -68,7 +68,8 @@ class CustomerLedgerController extends Controller
         return response()->json(['success' => true, 'ledger' => $ledger]);
     }
 
-    public function destroy(CustomerLedger $ledger) {
+    public function destroy($customerId, $ledgerId) {
+        $ledger = CustomerLedger::find($ledgerId);
         $ledger->delete();
         return response()->json(['success' => true]);
     }

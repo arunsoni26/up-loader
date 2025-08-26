@@ -6,8 +6,8 @@
         data-id="{{ $row->id }}"
         data-date="{{ $row->date }}"
         data-description="{{ $row->description }}"
-        data-debit="{{ $row->debit }}"
-        data-credit="{{ $row->credit }}"
+        data-amount="{{ $row->amount }}"
+        data-ledger-type="{{ $row->type }}"
     >
         <i class="fa fa-edit"></i>
     </button>
