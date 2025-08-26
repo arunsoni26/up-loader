@@ -116,7 +116,7 @@
                 <label class="form-label">Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    <input type="password" value="{{ $customer->password ?? '' }}" name="password" class="form-control" placeholder="Enter password" required>
+                    <input type="password" value="" name="password" class="form-control" placeholder="Enter password" @if(!$customer && !isset($customer->id)) required @endif>
                 </div>
             </div>
 
@@ -124,7 +124,7 @@
                 <label class="form-label">Confirm Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
+                    <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" @if(!$customer && !isset($customer->id)) required @endif>
                 </div>
             </div>
 
@@ -158,7 +158,7 @@
                 <label class="form-label">Date of Birth</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                    <input type="date" name="dob" class="form-control" value="{{ $customer->dob ?? '' }}">
+                    <input type="date" name="dob" class="form-control" value="{{ (!empty($customer->dob))?\Carbon\Carbon::parse($customer->dob)->format('Y-m-d') : '' }}">
                 </div>
             </div>
 

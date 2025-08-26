@@ -14,7 +14,14 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                    <img src="{{ asset('img/avatars/avatar.jpg') }}" class="avatar img-fluid rounded" alt="Charles Hall" />
+                    @php
+                        $profilePic = url('public/img/avatars/avatar.jpg');
+                        if (!empty($userInfo->image)) {
+                            //$profilePic = Storage::disk('s3')->url($userInfo->image);
+                            $profilePic = Storage::disk('s3')->temporaryUrl($userInfo->image, now()->addMinutes(120));
+                        }
+                    @endphp
+                    <img src="{{ $profilePic }}" class="avatar img-fluid rounded" alt="Charles Hall" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class='dropdown-item' href='{{ route('admin.profile') }}'><i class="align-middle me-1" data-feather="user"></i> Profile</a>

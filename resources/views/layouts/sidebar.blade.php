@@ -16,7 +16,14 @@
         <div class="sidebar-user">
             <div class="d-flex justify-content-center">
                 <div class="flex-shrink-0">
-                    <img src="{{ asset('img/avatars/avatar.jpg') }}" class="avatar img-fluid rounded me-1" alt="Charles Hall" />
+                    @php
+                        $profilePic = url('public/img/avatars/avatar.jpg');
+                        if (!empty($userInfo->image)) {
+                            //$profilePic = Storage::disk('s3')->url($userInfo->image);
+                            $profilePic = Storage::disk('s3')->temporaryUrl($userInfo->image, now()->addMinutes(120));
+                        }
+                    @endphp
+                    <img src="{{ $profilePic }}" class="avatar img-fluid rounded me-1" alt="Charles Hall" />
                 </div>
                 <div class="flex-grow-1 ps-2">
                     <a class="sidebar-user-title dropdown-toggle" href="#" data-bs-toggle="dropdown">

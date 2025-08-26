@@ -108,6 +108,17 @@ class CustomerController extends Controller
             'group_id' => 'nullable|integer|exists:customer_groups,id',
             'password' => $request->id ? 'nullable|min:6|confirmed' : 'required|min:6|confirmed',
         ];
+        // Password rules
+        if ($customerId) {
+            // On update → optional but must be confirmed if provided
+            if ($request->filled('password')) {
+                $rules['password'] = 'nullable|min:6|confirmed';
+            }
+        } else {
+            // On create → required and must be confirmed
+            $rules['password'] = 'required|min:6|confirmed';
+        }
+
         if ($customerId) {
             $rules['email'] = [
                 'nullable',
@@ -142,11 +153,11 @@ class CustomerController extends Controller
 
             $user->name = $request->name;
             $user->email = $request->email;
-            if ($request->filled('password')) {
+            // Only update password if filled
+            if ($request->filled('password') && !empty($request->password)) {
                 $user->password = bcrypt($request->password);
-            } else {
-                $user->password = bcrypt(123456);
             }
+            
             $user->role_id = 3;
             $user->save();
 
@@ -171,10 +182,13 @@ class CustomerController extends Controller
             $customer->gst = $request->gst;
             $customer->aadhar = $request->aadhar;
             $customer->address = $request->address;
-            $customer->password = $request->password;
             $customer->mobile_no = $request->mobile_no;
             $customer->updated_by = auth()->id();
 
+            // Only update customer password if filled
+            if ($request->filled('password') && !empty($request->password)) {
+                $customer->password = $request->password;
+            }
             
             // ===== S3 Uploads =====
             $disk = 's3'; // change to 'local' for dev if you like

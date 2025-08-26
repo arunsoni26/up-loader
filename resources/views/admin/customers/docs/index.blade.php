@@ -37,7 +37,9 @@
                             <th>Type</th>
                             <th>Description</th>
                             <th>File</th>
-                            <th>Uploaded By</th>
+                            @if (in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+                                <th>Uploaded By</th>
+                            @endif
                             <th>Date</th>
                             <th style="width: 80px;">Actions</th>
                         </tr>
@@ -110,7 +112,9 @@
                 { data: 'type', defaultContent: '-' },
                 { data: 'desc', defaultContent: '-' },
                 { data: 'file', defaultContent: '' },
-                { data: 'by', defaultContent: '-' },
+                @if (in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+                    { data: 'by', defaultContent: '-' },
+                @endif
                 { data: 'date', defaultContent: '-' },
                 { data: 'actions', defaultContent: '', orderable: false, searchable: false }
             ],
