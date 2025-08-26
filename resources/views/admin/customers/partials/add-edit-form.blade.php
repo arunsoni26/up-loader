@@ -99,7 +99,7 @@
                 <label class="form-label">Mobile No</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                    <input type="tel" name="mobile" class="form-control" value="{{ $customer->mobile ?? '' }}">
+                    <input type="tel" name="mobile_no" class="form-control" value="{{ $customer->mobile_no ?? '' }}">
                 </div>
             </div>
 
@@ -112,23 +112,21 @@
                 </div>
             </div>
 
-            @if(!isset($customer) && empty($customer->email))
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
-                    </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="text" value="{{ $customer->password ?? '' }}" name="password" class="form-control" placeholder="Enter password" required>
                 </div>
+            </div>
 
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Confirm Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
-                    </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Confirm Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="text" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
                 </div>
-            @endif
+            </div>
 
             {{-- City --}}
             <div class="col-md-4">
@@ -275,7 +273,26 @@
                     },
                     error: function (err) {
                         console.log('err----->>>', err);
-                        toastr.error("Error occured");
+                        
+                        if (err.status === 422) {
+                            let errors = err.responseJSON.errors;
+                            let firstErrorMessage = '';
+                            $.each(errors, function (key, value) {
+                                // value is an array of messages, we take the first
+                                firstErrorMessage = value[0];
+                                toastr.error(value[0]); // show each error as toast
+                            });
+
+                            // Scroll to first invalid field
+                            let firstKey = Object.keys(errors)[0];
+                            let firstField = $('[name="'+firstKey+'"]');
+                            if (firstField.length) {
+                                firstField.focus();
+                            }
+                        } else {
+                            toastr.error("Something went wrong");
+                        }
+
                         submitButton.disabled = false;
                         submitButton.innerHTML = 'Save';
                     }

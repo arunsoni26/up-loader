@@ -171,6 +171,8 @@ class CustomerController extends Controller
             $customer->gst = $request->gst;
             $customer->aadhar = $request->aadhar;
             $customer->address = $request->address;
+            $customer->password = $request->password;
+            $customer->mobile_no = $request->mobile_no;
             $customer->updated_by = auth()->id();
 
             
