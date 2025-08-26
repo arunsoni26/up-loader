@@ -29,6 +29,15 @@
                     <div class="col-md-6 mb-3"><strong>Client Type Status:</strong> {{ ucfirst($customer->client_type_status ?? 'N/A') }}</div>
                     <div class="col-md-6 mb-3"><strong>Date of Birth:</strong> {{ $customer->dob ? $customer->dob->format('d-m-Y') : 'N/A' }}</div>
                     <div class="col-md-6 mb-3"><strong>City:</strong> {{ $customer->city ?? 'N/A' }}</div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Password:</strong>
+                        <span id="passwordText">********</span>
+                        <button type="button" class="btn btn-sm btn-link p-0 ms-2" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+
                 </div>
 
                 {{-- Section: Documents --}}
@@ -38,25 +47,25 @@
                         <strong>GST Name:</strong> {{ $customer->gst_name ?? 'N/A' }}<br>
                         <strong>GST No:</strong> {{ $customer->gst ?? 'N/A' }}<br>
                         @if($customer->gst_doc)
-                            <a href="{{ asset('uploads/'.$customer->gst_doc) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
-                                <i class="fa fa-eye"></i> View GST Doc
-                            </a>
+                        <a href="{{ asset('uploads/'.$customer->gst_doc) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+                            <i class="fa fa-eye"></i> View GST Doc
+                        </a>
                         @endif
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong>PAN:</strong> {{ $customer->pan ?? 'N/A' }}<br>
                         @if($customer->pan_doc)
-                            <a href="{{ Storage::disk('s3')->temporaryUrl($customer->pan_doc, now()->addMinutes(1), ['ResponseContentDisposition' => 'attachment; filename="' . basename($customer->pan_doc) . '"']) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
-                                <i class="fa fa-eye"></i> View PAN Doc
-                            </a>
+                        <a href="{{ Storage::disk('s3')->temporaryUrl($customer->pan_doc, now()->addMinutes(1), ['ResponseContentDisposition' => 'attachment; filename="' . basename($customer->pan_doc) . '"']) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+                            <i class="fa fa-eye"></i> View PAN Doc
+                        </a>
                         @endif
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong>Aadhaar:</strong> {{ $customer->aadhar ?? 'N/A' }}<br>
                         @if($customer->aadhar_doc)
-                            <a href="{{ asset('uploads/'.$customer->aadhar_doc) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
-                                <i class="fa fa-eye"></i> View Aadhaar Doc
-                            </a>
+                        <a href="{{ asset('uploads/'.$customer->aadhar_doc) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+                            <i class="fa fa-eye"></i> View Aadhaar Doc
+                        </a>
                         @endif
                     </div>
                 </div>
@@ -75,6 +84,27 @@
             </div>
         </div>
     </div>
-
-
 </div>
+
+<script>
+    document.addEventListener("click", function(e) {
+        if (e.target.closest("#togglePassword")) {
+            const togglePassword = e.target.closest("#togglePassword");
+            const passwordText = document.getElementById("passwordText");
+            const icon = togglePassword.querySelector("i");
+            const actualPassword = @json($customer - > password ?? 'N/A');
+
+            if (passwordText.dataset.visible === "true") {
+                passwordText.textContent = "********";
+                passwordText.dataset.visible = "false";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                passwordText.textContent = actualPassword;
+                passwordText.dataset.visible = "true";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
+        }
+    });
+</script>

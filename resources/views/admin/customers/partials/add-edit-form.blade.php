@@ -116,7 +116,7 @@
                 <label class="form-label">Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    <input type="text" value="{{ $customer->password ?? '' }}" name="password" class="form-control" placeholder="Enter password" required>
+                    <input type="password" value="{{ $customer->password ?? '' }}" name="password" class="form-control" placeholder="Enter password" required>
                 </div>
             </div>
 
@@ -124,7 +124,7 @@
                 <label class="form-label">Confirm Password</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    <input type="text" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
+                    <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" required>
                 </div>
             </div>
 
