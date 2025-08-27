@@ -63,8 +63,8 @@
                             <div class="mb-3">
                                 <label>Type</label>
                                 <select class="form-control" name="type" id="ledgerType" required>
-                                    <option value="debit">Debit</option>
-                                    <option value="credit">Credit</option>
+                                    <option value="debit">Receipt</option>
+                                    <option value="credit">Payment</option>
                                 </select>
                             </div>
 
