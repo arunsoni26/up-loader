@@ -28,7 +28,7 @@
                 <label class="form-label">Email</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                    <input type="email" name="email" class="form-control" value="{{ $user->email ?? '' }}" readonly required>
+                    <input type="email" name="email" class="form-control" value="{{ $user->email ?? '' }}" @if($user && isset($user->id)) readonly @endif required>
                 </div>
             </div>
             
