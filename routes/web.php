@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
 
-Route::get('/', function () {
-    return redirect('login');
-});
+// Route::get('/', function () {
+//     return redirect('homepage');
+// });
 
 Auth::routes();
 
@@ -122,7 +122,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 });
 
 //Frontend
-Route::get('/homepage', [FrontendController::class, 'home'])->name('homepage');
+Route::get('/', [FrontendController::class, 'home'])->name('homepage');
 Route::get('/news', [FrontendController::class, 'news'])->name('news');
 Route::get('/banners', [FrontendController::class, 'banners'])->name('banners');
 Route::get('/news/load-more', [FrontendController::class, 'loadMore'])->name('news.loadMore');
