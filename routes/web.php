@@ -124,5 +124,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 //Frontend
 Route::get('/homepage', [FrontendController::class, 'home'])->name('homepage');
 Route::get('/news', [FrontendController::class, 'news'])->name('news');
+Route::get('/banners', [FrontendController::class, 'banners'])->name('banners');
 Route::get('/news/load-more', [FrontendController::class, 'loadMore'])->name('news.loadMore');
+Route::get('/gallery/load-more', [FrontendController::class, 'bannerloadMore'])->name('gallery.loadMore');
 Route::get('/news/{id}', [FrontendController::class, 'show'])->name('news.show');
