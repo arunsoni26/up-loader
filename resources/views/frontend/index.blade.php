@@ -162,6 +162,7 @@
                 <ul class="navbar-nav ms-auto fw-medium">
                     <li class="nav-item"><a class="nav-link" href="{{ route('homepage') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('news') }}">News</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('banners') }}">Gallery</a></li>
                     <!-- <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="#services">Services</a></li> -->
                 </ul>
@@ -234,6 +235,7 @@
                     <ul class="list-unstyled">
                         <li><a href="{{ route('homepage') }}">Home</a></li>
                         <li><a href="{{ route('news') }}">News</a></li>
+                        <li><a href="{{ route('banners') }}">Gallery</a></li>
                         <!-- <li><a href="#about">About</a></li>
                         <li><a href="#services">Services</a></li> -->
                     </ul>
