@@ -44,6 +44,9 @@
                         <div class="col-md-3">
                             <input type="text" id="filterCode" placeholder="Search Code..." class="form-control shadow-sm" />
                         </div>
+                        <div class="col-md-3">
+                            <input type="text" id="filterGstName" placeholder="Search GST Name..." class="form-control shadow-sm" />
+                        </div>
                     </div>
 
                     <!-- Table -->
@@ -115,6 +118,7 @@
                         d.group_id = $('#filterGroup').val();
                         d.status = $('#filterStatus').val();
                         d.code = $('#filterCode').val();
+                        d.gstName = $('#filterGstName').val();
                     },
                     error: function (xhr, error, thrown) {
                         console.error("DataTables AJAX error:", xhr.responseText);
@@ -160,7 +164,7 @@
         initCustomersTable();
 
         // Reload on filters
-        $('#filterGroup, #filterStatus, #filterCode').on('change keyup', function() {
+        $('#filterGroup, #filterStatus, #filterCode, #filterGstName').on('change keyup', function() {
             if (table) {
                 table.ajax.reload();
             }

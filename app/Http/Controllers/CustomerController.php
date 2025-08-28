@@ -33,6 +33,9 @@ class CustomerController extends Controller
         if ($request->code) {
             $query->where('code', 'LIKE', "%{$request->code}%");
         }
+        if ($request->gstName) {
+            $query->where('gst_name', 'LIKE', "%{$request->gstName}%");
+        }
 
         $customers = $query->get();
 
