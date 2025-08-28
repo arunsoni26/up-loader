@@ -151,7 +151,7 @@
                     { data: 'actions', orderable: false, searchable: false, className: 'text-center' }
                 ],
                 createdRow: function (row, data, dataIndex) {
-                    $(row).addClass('zoom-item');
+                    // $(row).addClass('zoom-item');
                 }
             });
         }
