@@ -169,7 +169,7 @@
         const id = $(this).data('id');
         $.ajax({
             url: "{{ route('admin.customers.docs.delete', [$customer->id, 0]) }}".replace('/0', '/' + id),
-            type: 'DELETE',
+            type: 'POST',
             data: {_token: "{{ csrf_token() }}"},
             success: function(res){
                 if(res.success && docsTable) docsTable.ajax.reload();
