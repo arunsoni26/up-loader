@@ -7,9 +7,11 @@
             <h4 class="mb-0 fw-bold">
                 <i class="bi bi-people-fill me-2"></i> Users
             </h4>
-            <button id="addUserBtn" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Add User
-            </button>
+            @if(canDo('users','can_add'))
+                <button id="addUserBtn" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add User
+                </button>
+            @endif
         </div>
 
         <div class="card-body">
@@ -153,6 +155,26 @@
         $(document).on('change', '.toggle-status', function () {
             $.post("{{ url('admin/users/toggle-status') }}/" + $(this).data('id'), {
                 _token: "{{ csrf_token() }}"
+            });
+        });
+
+        
+        $(document).on('click', '.add-permissions-btn', function(){
+            let userId = $(this).data('role-id');
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "post",
+                url: "{{route('admin.user-permission-form')}}",
+                data: {
+                    userId: userId
+                },
+                success: function (data) {
+                    $('#addEditContent').html(data);
+                    $('#editModal').modal('show');
+                }
             });
         });
     });

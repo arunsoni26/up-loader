@@ -75,10 +75,6 @@ class RolePermissionController extends Controller
             'module' => 'required|unique:permissions,module',
         ]);
 
-        Permission::create([
-            'module' => $request->module,
-        ]);
-
         return redirect()->route('admin.role-permissions')
                          ->with('success', 'Module added successfully');
     }

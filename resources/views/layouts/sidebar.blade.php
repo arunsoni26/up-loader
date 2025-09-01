@@ -62,7 +62,7 @@
                 </li>
             @endif
 
-            @if(canDo('users','can_add'))
+            @if(canDo('users','can_view_nav'))
                 <li class="sidebar-item {{ request()->routeIs('admin.users.index') ? 'active' : '' }}">
                     <a class='sidebar-link' href="{{ route('admin.users.index') }}">
                         <i class="fas fa-users"></i>

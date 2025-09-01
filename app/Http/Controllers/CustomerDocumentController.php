@@ -18,7 +18,19 @@ class CustomerDocumentController extends Controller
       	if (auth()->user()->role->slug == 'customer' && auth()->user()->id !== $customer->user_id) {
           	abort(403, 'Unauthorized access.');
         }
-        $years = GSTYear::orderBy('label','desc')->get();
+        $customerId = $customer->id;
+        $years = GstYear::leftJoin('customer_gst_year_verifieds as cgyv', function($join) use ($customerId) {
+                $join->on('cgyv.gst_year_id', '=', 'gst_years.id')
+                    ->where('cgyv.customer_id', $customerId);
+            })
+            ->select(
+                'gst_years.id',
+                'gst_years.label',
+                DB::raw('COALESCE(cgyv.is_verify, 0) as verified')
+            )
+            ->orderBy('gst_years.label', 'desc')
+            ->get();
+        
         $docTypeQuery = DocType::where('status', 1);
         
         if (auth()->user()->role->slug == 'customer') {

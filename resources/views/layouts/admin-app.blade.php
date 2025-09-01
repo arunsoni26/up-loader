@@ -2,6 +2,7 @@
 
 @include('layouts.sidebar')
 
+@stack('custom-style')
 <div class="main">
     @include('layouts.top-navbar')
 
@@ -39,6 +40,14 @@
 
 <!-- moment js -->
 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+</script>
 @stack('scripts')
+@yield('custom-scripts')
 </body>
 </html>

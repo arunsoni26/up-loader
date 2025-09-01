@@ -3,16 +3,24 @@
 @section('content')
 <div class="container mt-4">
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <div>
                 <h5 class="mb-0"><i class="fa fa-folder-open me-2"></i> Customer Docs — {{ $customer->name }}</h5>
                 <small class="opacity-75">Manage uploads by GST year & type</small>
             </div>
             <div class="d-flex gap-2">
+                <input type="hidden" id="selectedYear">
+                <label class="custom-checkbox" id="verifyBox" style="display: none;">
+                    <input type="checkbox" id="yearVerified" value="1">
+                    <span class="checkbox-icon">
+                        <i class="fas fa-check" id="showVerified" style="display: none;"></i>
+                    </span>
+                    <span class="ms-2">Verify</span>
+                </label>
                 <select id="filterYear" class="form-select form-select-sm">
                     <option value="">All GST Years</option>
                     @foreach($years as $y)
-                        <option value="{{ $y->id }}">{{ $y->label }}</option>
+                        <option value="{{ $y->id }}" data-verified="{{ $y->verified }}">{{ $y->label }}</option>
                     @endforeach
                 </select>
                 <select id="filterType" class="form-select form-select-sm">
@@ -132,6 +140,68 @@
         if (docsTable) {
             docsTable.ajax.reload();
         }
+
+        let selected = $(this).find(':selected');
+        let yearId = selected.val();
+        let verified = selected.data('verified');
+
+        $('#selectedYear').val(yearId);
+
+        if (yearId) {
+            $('#verifyBox').show();
+            if (verified) {
+                $('#yearVerified').prop('checked', true);
+                $('#showVerified').show();
+            } else {
+                $('#yearVerified').prop('checked', false);
+                $('#showVerified').hide();
+            }
+        } else {
+            $('#verifyBox').hide();
+            $('#yearVerified').prop('checked', false);
+            $('#showVerified').hide();
+        }
+    });
+
+    // When verify checkbox is toggled
+    $('#yearVerified').on('change', function () {
+        let yearId = $('#selectedYear').val();
+        let customerId = "{{ $customer->id }}"; // pass customer id from blade
+
+        if (!yearId) return;
+
+        if(!confirm('Are you sure? You want to change this')) {
+            $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
+            return ;
+        };
+        $.ajax({
+            url: "{{ route('admin.customers.gstYears.verify', ':customerId') }}".replace(':customerId', customerId),
+            type: 'POST',
+            data: {
+                gst_year_id: yearId,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                if (res.success) {
+                    if (res.verified) {
+                        $('#showVerified').show();
+                        // also update <option> attribute so it's synced
+                        $(`#filterYear option[value="${yearId}"]`).data('verified', 1);
+                    } else {
+                        $('#showVerified').hide();
+                        $(`#filterYear option[value="${yearId}"]`).data('verified', 0);
+                    }
+                } else {
+                    alert('Update failed!');
+                    // revert checkbox
+                    $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
+                }
+            },
+            error: function () {
+                alert('Something went wrong.');
+                $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
+            }
+        });
     });
 
     // Keep your existing event handlers intact below...
@@ -154,7 +224,7 @@
             label: lbl
         }, function(res){
             if(res.success){
-                $('#filterYear').prepend(`<option value="${res.data.id}">${res.data.label}</option>`);
+                $('#filterYear').append(`<option value="${res.data.id}">${res.data.label}</option>`);
                 $('#filterYear').val(res.data.id).trigger('change');
                 if($('#docs_gst_year').length){
                     $('#docs_gst_year').prepend(`<option value="${res.data.id}">${res.data.label}</option>`)
@@ -179,4 +249,35 @@
 
 })();
 </script>
+@endpush
+
+@push('custom-style')
+<style>
+    .custom-checkbox {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkbox-icon {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked + .checkbox-icon {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+      color: white;
+    }
+</style>
 @endpush

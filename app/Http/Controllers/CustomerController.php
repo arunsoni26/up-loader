@@ -283,4 +283,9 @@ class CustomerController extends Controller
         CustomerGroup::findOrFail($request->groupId)->delete();
         return response()->json(['success' => true, 'message' => 'Group deleted successfully.']);
     }
+
+    public function downloadCustomers(Request $request) {
+        $customers = Customer::all();
+        return view('admin.customers.downloads.customer-list', compact('customers'));
+    }
 }

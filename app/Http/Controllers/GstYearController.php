@@ -22,9 +22,20 @@ class GstYearController extends Controller
         );
         return response()->json(['success'=>true,'data'=>$year,'message'=>'GST Year saved']);
     }
-
+    
     public function destroy($id) {
         GSTYear::findOrFail($id)->delete();
         return response()->json(['success'=>true,'message'=>'GST Year deleted']);
+    }
+
+    public function verifiedYear(Request $request) {
+        dd($request->all());
+        // $gstYear = GSTYear::find($request->gstYear);
+        // return response()->json([
+        //     'code'=>200,
+        //     'success'=>true,
+        //     'data' => $gstYear,
+        //     'message' => 'GST Year verified'
+        // ]);
     }
 }

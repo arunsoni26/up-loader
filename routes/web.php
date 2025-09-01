@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDocumentController;
+use App\Http\Controllers\CustomerGstYearController;
 use App\Http\Controllers\CustomerLedgerController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\GstYearController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
@@ -45,18 +47,23 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::post('role-permission-form', [RolePermissionController::class, 'rolePermissionForm'])->name('role-permission-form')->middleware('permission:permissions,can_add');
             Route::post('update-role-permission', [RolePermissionController::class, 'update'])->name('update-role-permission')->middleware('permission:permissions,can_add');
             Route::get('role/{id}/permissions', [RolePermissionController::class, 'getPermissions'])->name('role.get-permissions')->middleware('permission:permissions,can_view');
-    
-            // Users Module
-            Route::prefix('users')->name('users.')->group(function () {
-                Route::get('/', [App\Http\Controllers\UserController::class,'index'])->name('index');
-                Route::any('/list', [App\Http\Controllers\UserController::class,'list'])->name('list'); // Ajax JSON
-                Route::post('/form', [App\Http\Controllers\UserController::class,'form'])->name('form');
-                Route::post('/save', [App\Http\Controllers\UserController::class,'save'])->name('save');
-                Route::post('/toggle-status/{id}', [App\Http\Controllers\UserController::class,'toggleStatus'])->name('toggle-status');
-                Route::any('/duri: elete/{id}', [App\Http\Controllers\UserController::class,'destroy'])->name('delete');
-            });
+            
+            // user permissions
+            Route::post('user-permission-form', [UserController::class, 'userPermissionForm'])->name('user-permission-form')->middleware('permission:permissions,can_add');
+            Route::post('update-user-permission', [UserController::class, 'updatePermission'])->name('update-user-permission')->middleware('permission:permissions,can_add');
+            
         });
         
+        // Users Module
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [App\Http\Controllers\UserController::class,'index'])->name('index')->middleware('permission:users,can_view');
+            Route::any('/list', [App\Http\Controllers\UserController::class,'list'])->name('list')->middleware('permission:users,can_view'); // Ajax JSON
+            Route::post('/form', [App\Http\Controllers\UserController::class,'form'])->name('form')->middleware('permission:users,can_add');
+            Route::post('/save', [App\Http\Controllers\UserController::class,'save'])->name('save')->middleware('permission:users,can_add');
+            Route::post('/toggle-status/{id}', [App\Http\Controllers\UserController::class,'toggleStatus'])->name('toggle-status')->middleware('permission:users,can_edit');
+            Route::any('/duri: elete/{id}', [App\Http\Controllers\UserController::class,'destroy'])->name('delete')->middleware('permission:users,can_edit');
+        });
+
         // routes/web.php
         Route::group(['prefix' => 'customers/{customer}/ledger', 'as' => 'customers.ledger.'], function () {
             Route::get('/', [CustomerLedgerController::class, 'index'])->name('index'); // page
@@ -82,6 +89,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 Route::post('save', [CustomerController::class, 'save'])->name('save')->middleware('permission:customers,can_edit');
 
                 Route::any('/view', [CustomerController::class, 'view'])->name('view')->middleware('permission:customers,can_view');
+
+                // download customers list
+                Route::any('/download-customers', [CustomerController::class, 'downloadCustomers'])->name('download-customers')->middleware('permission:customers,can_view');
             });
         });
         
@@ -117,6 +127,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::post('/save', [GstYearController::class,'save'])->name('save');     // add/edit
             Route::any('/{id}', [GstYearController::class,'destroy'])->name('delete');
         });
+
+        Route::post('/customers/{customer}/gst-years/verify', [CustomerGstYearController::class, 'verify'])->name('customers.gstYears.verify');
     });
     
 });

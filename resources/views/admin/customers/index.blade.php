@@ -18,9 +18,14 @@
                     <h4 class="mb-0 fw-bold">
                         <i class="bi bi-people-fill me-2"></i> Customers
                     </h4>
-                    <button id="addCustomerBtn" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Add Customer
-                    </button>
+                    <div class="btn-group">
+                        <a href="{{ route('admin.customers.download-customers') }}" class="btn btn-success">
+                            <i class="fas fa-download"></i>
+                        </a>
+                        <button id="addCustomerBtn" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Customer
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -139,7 +144,7 @@
                                 initCustomersTable(retries - 1);
                             }, 1000);
                         } else {
-                            alert("Failed to load customer data. Please reload the page.");
+                            console.warn("Failed to load customer data. Please reload the page.");
                         }
                     }
                 },
