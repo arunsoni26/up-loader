@@ -9,14 +9,16 @@
                 <small class="opacity-75">Manage uploads by GST year & type</small>
             </div>
             <div class="d-flex gap-2">
-                <input type="hidden" id="selectedYear">
-                <label class="custom-checkbox" id="verifyBox" style="display: none;">
-                    <input type="checkbox" id="yearVerified" value="1">
-                    <span class="checkbox-icon">
-                        <i class="fas fa-check" id="showVerified" style="display: none;"></i>
-                    </span>
-                    <span class="ms-2">Verify</span>
-                </label>
+                @if (in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+                    <input type="hidden" id="selectedYear">
+                    <label class="custom-checkbox" id="verifyBox" style="display: none;">
+                        <input type="checkbox" id="yearVerified" value="1">
+                        <span class="checkbox-icon">
+                            <i class="fas fa-check" id="showVerified" style="display: none;"></i>
+                        </span>
+                        <span class="ms-2">Verify</span>
+                    </label>
+                @endif
                 <select id="filterYear" class="form-select form-select-sm">
                     <option value="">All GST Years</option>
                     @foreach($years as $y)
@@ -141,68 +143,72 @@
             docsTable.ajax.reload();
         }
 
-        let selected = $(this).find(':selected');
-        let yearId = selected.val();
-        let verified = selected.data('verified');
+        @if (in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+            let selected = $(this).find(':selected');
+            let yearId = selected.val();
+            let verified = selected.data('verified');
 
-        $('#selectedYear').val(yearId);
+            $('#selectedYear').val(yearId);
 
-        if (yearId) {
-            $('#verifyBox').show();
-            if (verified) {
-                $('#yearVerified').prop('checked', true);
-                $('#showVerified').show();
+            if (yearId) {
+                $('#verifyBox').show();
+                if (verified) {
+                    $('#yearVerified').prop('checked', true);
+                    $('#showVerified').show();
+                } else {
+                    $('#yearVerified').prop('checked', false);
+                    $('#showVerified').hide();
+                }
             } else {
+                $('#verifyBox').hide();
                 $('#yearVerified').prop('checked', false);
                 $('#showVerified').hide();
             }
-        } else {
-            $('#verifyBox').hide();
-            $('#yearVerified').prop('checked', false);
-            $('#showVerified').hide();
-        }
+        @endif
     });
 
     // When verify checkbox is toggled
-    $('#yearVerified').on('change', function () {
-        let yearId = $('#selectedYear').val();
-        let customerId = "{{ $customer->id }}"; // pass customer id from blade
+    @if (in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
+        $('#yearVerified').on('change', function () {
+            let yearId = $('#selectedYear').val();
+            let customerId = "{{ $customer->id }}"; // pass customer id from blade
 
-        if (!yearId) return;
+            if (!yearId) return;
 
-        if(!confirm('Are you sure? You want to change this')) {
-            $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
-            return ;
-        };
-        $.ajax({
-            url: "{{ route('admin.customers.gstYears.verify', ':customerId') }}".replace(':customerId', customerId),
-            type: 'POST',
-            data: {
-                gst_year_id: yearId,
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (res) {
-                if (res.success) {
-                    if (res.verified) {
-                        $('#showVerified').show();
-                        // also update <option> attribute so it's synced
-                        $(`#filterYear option[value="${yearId}"]`).data('verified', 1);
+            if(!confirm('Are you sure? You want to change this')) {
+                $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
+                return ;
+            };
+            $.ajax({
+                url: "{{ route('admin.customers.gstYears.verify', ':customerId') }}".replace(':customerId', customerId),
+                type: 'POST',
+                data: {
+                    gst_year_id: yearId,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (res) {
+                    if (res.success) {
+                        if (res.verified) {
+                            $('#showVerified').show();
+                            // also update <option> attribute so it's synced
+                            $(`#filterYear option[value="${yearId}"]`).data('verified', 1);
+                        } else {
+                            $('#showVerified').hide();
+                            $(`#filterYear option[value="${yearId}"]`).data('verified', 0);
+                        }
                     } else {
-                        $('#showVerified').hide();
-                        $(`#filterYear option[value="${yearId}"]`).data('verified', 0);
+                        alert('Update failed!');
+                        // revert checkbox
+                        $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
                     }
-                } else {
-                    alert('Update failed!');
-                    // revert checkbox
+                },
+                error: function () {
+                    alert('Something went wrong.');
                     $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
                 }
-            },
-            error: function () {
-                alert('Something went wrong.');
-                $('#yearVerified').prop('checked', !$('#yearVerified').prop('checked'));
-            }
+            });
         });
-    });
+    @endif
 
     // Keep your existing event handlers intact below...
 
