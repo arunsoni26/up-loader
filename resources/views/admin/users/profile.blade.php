@@ -90,7 +90,7 @@
                                     <div class="col-md-4">
                                         <div class="text-center">
                                             @php
-                                                $profilePic = url('public/img/avatars/avatar.jpg');
+                                                $profilePic = url('/img/avatars/dummyavatar.png');
                                                 if (!empty($userInfo->image)) {
                                                     //$profilePic = Storage::disk('s3')->url($userInfo->image);
                                                     $profilePic = Storage::disk('s3')->temporaryUrl($userInfo->image, now()->addMinutes(120));

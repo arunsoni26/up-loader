@@ -17,7 +17,7 @@
             <div class="d-flex justify-content-center">
                 <div class="flex-shrink-0">
                     @php
-                        $profilePic = url('img/avatars/avatar.jpg');
+                        $profilePic = url('img/avatars/dummyavatar.png');
                         if (!empty(auth()->user()->image)) {
                             //$profilePic = Storage::disk('s3')->url(auth()->user()->image);
                             $profilePic = Storage::disk('s3')->temporaryUrl(auth()->user()->image, now()->addMinutes(120));

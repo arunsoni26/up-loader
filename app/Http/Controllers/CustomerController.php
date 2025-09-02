@@ -241,7 +241,8 @@ class CustomerController extends Controller
     public function view(Request $request)
     {
         $customer = Customer::findOrFail($request->custId);
-        return view('admin.customers.partials.view', compact('customer'));
+        $user = User::where('id', $customer->user_id)->first();
+        return view('admin.customers.partials.view', compact('customer', 'user'));
     }
     
     public function groupList()

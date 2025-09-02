@@ -15,7 +15,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-icon pe-md-0 dropdown-toggle" href="#" data-bs-toggle="dropdown">
                     @php
-                        $profilePic = url('img/avatars/avatar.jpg');
+                        $profilePic = url('img/avatars/dummyavatar.png');
                         if (!empty(auth()->user()->image)) {
                             //$profilePic = Storage::disk('s3')->url(auth()->user()->image);
                             $profilePic = Storage::disk('s3')->temporaryUrl(auth()->user()->image, now()->addMinutes(120));
