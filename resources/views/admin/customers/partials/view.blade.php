@@ -105,8 +105,8 @@
 
             <div class="col-md-7">
                 <h2>{{ $customer->name }}</h2>
-                <span class="text-muted"><i class="fa fa-envelope"></i> {{ $customer->email ?? 'N/A' }}</span><br>
-                <span class="text-muted"><i class="fa fa-phone"></i> {{ $customer->mobile_no ?? 'N/A' }}</span>
+                <span class="text-primary"><i class="fa fa-envelope"></i> {{ $customer->email ?? 'N/A' }}</span><br>
+                <span class="text-primary"><i class="fa fa-phone"></i> {{ $customer->mobile_no ?? 'N/A' }}</span>
             </div>
         </div>
     </div>
