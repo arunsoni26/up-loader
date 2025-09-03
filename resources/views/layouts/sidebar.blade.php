@@ -79,6 +79,15 @@
                     </a>
                 </li>
             @endif
+            
+            @if(auth()->user()->role->slug == 'customer' && canDo('ledgers','can_view'))
+                <li class="sidebar-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
+                    <a class='sidebar-link' href="{{ url('admin/customers/'.auth()->user()->customer->id.'/ledger' ) }}">
+                        <i class="fas fa-user-tie"></i>
+                        <span class="align-middle">Customers</span>
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 </nav>

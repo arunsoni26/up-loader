@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerGroup;
+use App\Models\GSTYear;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
@@ -286,7 +287,8 @@ class CustomerController extends Controller
     }
 
     public function downloadCustomers(Request $request) {
-        $customers = Customer::all();
-        return view('admin.customers.downloads.customer-list', compact('customers'));
+        $gstYears = GSTYear::all();
+        $customers = Customer::with(relations: ['verifiedYears.gstYear'])->get();
+        return view('admin.customers.downloads.customer-list', compact('customers', 'gstYears'));
     }
 }

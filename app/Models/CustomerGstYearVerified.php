@@ -12,4 +12,9 @@ class CustomerGstYearVerified extends Model
         'is_verify',
         'status'
     ];
+
+    public function gstYear()
+    {
+        return $this->belongsTo(GSTYear::class, 'gst_year_id');
+    }
 }

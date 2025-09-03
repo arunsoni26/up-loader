@@ -28,4 +28,9 @@ class Customer extends Model
     {
         return $this->belongsTo(CustomerGroup::class);
     }
+
+    public function verifiedYears()
+    {
+        return $this->hasMany(CustomerGstYearVerified::class, 'customer_id');
+    }
 }

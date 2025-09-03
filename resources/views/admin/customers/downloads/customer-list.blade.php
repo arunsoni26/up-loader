@@ -26,6 +26,7 @@
                 <th>Aadhar</th>
                 <th>Date of Birth</th>
                 <th>Address</th>
+                <th>Verified Years</th>
             </tr>
         </thead>
         <tbody>
@@ -46,6 +47,22 @@
                     <td>{{ $customer->aadhar }}</td>
                     <td>{{ $customer->dob ? \Carbon\Carbon::parse($customer->dob)->format('d-m-Y') : '' }}</td>
                     <td>{{ $customer->address }}</td>
+                    <td>
+                        @if($customer->verifiedYears->count())
+                            @foreach($gstYears as $year)
+                                @php
+                                    $match = $customer->verifiedYears->firstWhere('gst_year_id', $year->id);
+                                @endphp
+                                {{ $year->label }} - 
+                                {{ $match ? ($match->is_verify ? 'Verified' : 'Pending') : 'Pending' }}
+                                <br>
+                            @endforeach
+                        @else
+                            @foreach($gstYears as $year)
+                                {{ $year->label }} - Pending<br>
+                            @endforeach
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>
