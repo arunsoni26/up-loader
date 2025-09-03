@@ -84,7 +84,7 @@
                 <li class="sidebar-item {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
                     <a class='sidebar-link' href="{{ url('admin/customers/'.auth()->user()->customer->id.'/ledger' ) }}">
                         <i class="fas fa-user-tie"></i>
-                        <span class="align-middle">Customers</span>
+                        <span class="align-middle">Ledger</span>
                     </a>
                 </li>
             @endif
