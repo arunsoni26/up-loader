@@ -1,5 +1,5 @@
 <div class="btn-group" role="group">
-    @if(canDo('ledgers','can_view'))
+    @if(canDo('ledgers','can_edit'))
         <!-- Edit Button -->
         <button 
             type="button" 
@@ -14,7 +14,7 @@
         </button>
     @endif
 
-    @if(canDo('ledgers','can_view'))
+    @if(canDo('ledgers','can_edit'))
         <!-- Delete Button -->
         <button 
             type="button" 
