@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 class CustomerLedgerController extends Controller
 {
     public function index(Customer $customer) {
+      	if (auth()->user()->role->slug == 'customer' && auth()->user()->id !== $customer->user_id) {
+          	abort(403, 'Unauthorized access.');
+        }
         $outstanding = CustomerLedger::where('customer_id', $customer->id)
             ->selectRaw("
                 SUM(

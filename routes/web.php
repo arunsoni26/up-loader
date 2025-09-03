@@ -66,9 +66,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         // routes/web.php
         Route::group(['prefix' => 'customers/{customer}/ledger', 'as' => 'customers.ledger.'], function () {
-            Route::get('/', [CustomerLedgerController::class, 'index'])->name('index'); // page
-            Route::get('/list', [CustomerLedgerController::class, 'list'])->name('list'); // ajax
-            Route::post('/save', [CustomerLedgerController::class, 'save'])->name('save'); // add/edit
+            Route::get('/', [CustomerLedgerController::class, 'index'])->name('index');
+            Route::get('/list', [CustomerLedgerController::class, 'list'])->name('list');
+            Route::post('/save', [CustomerLedgerController::class, 'save'])->name('save');
             Route::any('/delete/{ledger}', [CustomerLedgerController::class, 'destroy'])->name('delete');
         });
 
