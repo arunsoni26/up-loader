@@ -19,12 +19,16 @@
                         <i class="bi bi-people-fill me-2"></i> Customers
                     </h4>
                     <div class="btn-group">
-                        <a href="{{ route('admin.customers.download-customers') }}" class="btn btn-success">
-                            <i class="fas fa-download"></i>
-                        </a>
-                        <button id="addCustomerBtn" class="btn btn-primary">
-                            <i class="bi bi-plus-circle"></i> Add Customer
-                        </button>
+                        @if(canDo('customers','can_view') && canDo('customer_docs','can_view'))
+                            <a href="{{ route('admin.customers.download-customers') }}" class="btn btn-success">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        @endif
+                        @if(canDo('customers','can_view'))
+                            <button id="addCustomerBtn" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add Customer
+                            </button>
+                        @endif
                     </div>
                 </div>
 
