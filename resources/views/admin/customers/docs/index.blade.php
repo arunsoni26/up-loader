@@ -31,7 +31,7 @@
                         <option value="{{ $docType->id }}">{{ $docType->name }}</option>
                     @endforeach
                 </select>
-              	@if(canDo('customer_docs', 'can_add', auth()->id())) 
+              	@if(canDo('customer_docs', 'can_add')) 
                     <button class="btn btn-light btn-sm" id="btnAddGstYear"><i class="fa fa-plus"></i> GST Year</button>
                     <button class="btn btn-success btn-sm" id="btnUploadDocs"><i class="fa fa-upload"></i> Upload Docs</button>
               	@endif
